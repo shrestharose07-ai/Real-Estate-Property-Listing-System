@@ -1,6 +1,6 @@
-#include<iostream>
-#include<string>
-#include<fstream>
+#include<iostream> //used for input and output operation
+#include<string> //used to work with text/string variables
+#include<fstream> //used for reading and writing file
 using namespace std;
 /*Maximum capacity of the property list
 (Global constant to prevent accidental modification)*/
@@ -9,6 +9,7 @@ const int MAX_PROPERTIES=50;
 class PropertyNotFoundException{
 	string message;
 	public: 
+	//constructor to set error message
 	PropertyNotFoundException(string msg){
 		message=msg;
 	}
@@ -22,7 +23,7 @@ class Property{
 		int id; //Property identification number
 		string address; //Property location/address
 		double price; //Property cost 
-		double area; //Property area
+		double area; //Property area in square feet
 		bool isSold;// Status flag: true if sold or false if available
 		static int totalListings; /* Static  member variable :Shared across all property 
 		instances to track total listings created*/
@@ -44,9 +45,10 @@ class Property{
 			isSold=false;
 			totalListings++;//Increment static count whenever a new property is created
 		}
+		//virtual destructor for clean memory deallocation
 		virtual ~Property(){}
-		virtual double calculateTax() const=0;
-		virtual double estimatedTax() const=0;
+		virtual double calculateTax() const=0;//for tax
+		virtual double estimatedValue() const=0; //estimated value 
 		
 		virtual void displayDetails()const{
 			cout<<"ID:"<<id<<endl;
@@ -57,23 +59,19 @@ class Property{
 		}
 		
 		int getID() const{
-			return id;
+			return id; //returns property id
 		}
 		double getArea() const{
-			return area;
+			return area; //returns area
 		}
 		double getPrice() const{
-			return price;
+			return price; //returns asking price
 		}
 		bool getIsSold() const{
-			return isSold;
-		}
-		void setSold(bool status)
-		{
-			isSold=status;
+			return isSold; //returns true or false status
 		}
 		static int getTotalListings(){
-			return totalListings;
+			return totalListings; //returns total counting of created properties
 		}
 		friend class Agency;
 };
@@ -81,21 +79,27 @@ int Property::totalListings=0;
 
 class ResidentialProperty: public Property{
 	private:
-		int bedrooms;
+		int bedrooms; //for bedroom counts
 	public:
 		ResidentialProperty():Property()
 		{
 			bedrooms=0;
 		}
-		ResidentialProperty(int i,string addr,double pc,int beds):Property(i,addr,pc){
+		ResidentialProperty(int i,string addr,double a,double pc,int beds):Property(i,addr,a,pc){
 			bedrooms=beds;
 		}
+		double estimatedTax() const override{ //redines pure virtual function to compute estimated tax
+			return (area *8000.0)+(bedrooms *50000.0);
+		}
+		double calculateTax() const override{ //redines pure virtual function to compute tax
+			return estimatedValue() *0.012;
+		}
 		void displayDetails() const override{
-			cout<<"[RESIDENTIAL PROPERTY]"<<endl;
-			cout<<"ID:"<<id<<endl;
-			cout<<"Address:"<<address<<endl;
-			cout<<"Price: Rs."<<price<<endl;
-			cout<<"Status:"<<(isSold ?"SOLD":"AVAILABLE")<<endl;
+			cout<<"\n[RESIDENTIAL PROPERTY]"<<endl;
+			Property::displayDetails();
+			cout<<"Bedrooms:"<<bedrooms<<endl;
+			cout<<"Estimated Market Values: Rs."<<estimatedValue()<<endl;
+			cout<<"Calculated Property Tax: Rs."<<calculateTax()<<endl;
 			cout<<"------------------------"<<endl;
 		}
 };
@@ -106,19 +110,31 @@ class CommercialProperty:public Property{
 		CommercialProperty():Property(){
 			businessType="";
 		}
-		CommercialProperty(int i,string addr,double pc,string bType):Property(i,addr,pc){
+		CommercialProperty(int i,string addr,double a,double pc,string bType):Property(i,addr,a,pc){
 			businessType=bType;
 		}
+		double estimatedTax() const override{
+			return area*15000.0;
+		}
+		double calculateTax() const override{
+			return estimatedTax() *0.025;
+		}
 		void displayDetails() const override{
-			cout<<"[COMMERCIAL PROPERTY]"<<endl;
-			cout<<"ID:"<<id<<endl;
-			cout<<"Address:"<<address<<endl;
-			cout<<"Price: Rs."<<price<<endl;
+			cout<<"\n[COMMERCIAL PROPERTY]"<<endl;
+			Property::displayDetails();
 			cout<<"Business Type:"<<businessType<<endl;
-			cout<<"Status:"<<(isSold ?"SOLD":"AVAILABLE")<<endl;
+			cout<<"Estimated Market Values: Rs."<<estimatedValue()<<endl;;
+			cout<<"Calculated Property Tax: Rs."<<calculateTax()<<endl;
 			cout<<"------------------------"<<endl;
 		}
+		string getBusinessType() const{
+			return businessType;
+		}
 };
+//Global helper function demostrating polymorphic printing via reference
+void showListing(const Property &p){
+	p.displayDetails(); //dyanimc binding triggers correct subtype function
+}
 class Agency{
 	private:
 		Property* propertyList[MAX_PROPERTIES];
@@ -186,12 +202,5 @@ int main()
 		cout<<"6.Save & Exit\n";
 		cout<<"Enter your choice:";
 		cin>>choice;
-		
-		switch(choice)
-		{
-			case 1:
-				
-		}
-	}
 	return 0;
 }
