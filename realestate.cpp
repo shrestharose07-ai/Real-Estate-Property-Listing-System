@@ -70,6 +70,10 @@ class Property{
 		bool getIsSold() const{
 			return isSold; //returns true or false status
 		}
+		void setSold(bool status)
+		{
+			isSold=status;
+		}
 		static int getTotalListings(){
 			return totalListings; //returns total counting of created properties
 		}
