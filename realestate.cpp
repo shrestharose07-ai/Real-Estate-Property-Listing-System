@@ -234,7 +234,7 @@ int main()
     real:
 	while(1)
 	{
-		cout<<"\n====Real Estate and Propery Listing====\n";
+		cout<<"\n====Real Estate and Property Listing====\n";
 		cout<<"1.Add Listing\n";
 		cout<<"2.View all Listings\n";
 		cout<<"3.Mark Property as Sold\n";
