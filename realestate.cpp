@@ -92,7 +92,7 @@ class ResidentialProperty: public Property{
 		ResidentialProperty(int i,string addr,double a,double pc,int beds):Property(i,addr,a,pc){
 			bedrooms=beds;
 		}
-		double estimatedTax() const override{ //redines pure virtual function to compute estimated tax
+		double estimatedValue() const override{ //redines pure virtual function to compute estimated tax
 			return (area *8000.0)+(bedrooms *50000.0);
 		}
 		double calculateTax() const override{ //redines pure virtual function to compute tax
@@ -117,11 +117,11 @@ class CommercialProperty:public Property{
 		CommercialProperty(int i,string addr,double a,double pc,string bType):Property(i,addr,a,pc){
 			businessType=bType;
 		}
-		double estimatedTax() const override{
+		double estimatedValue() const override{
 			return area*15000.0;
 		}
-		double calculateTax() const override{
-			return estimatedTax() *0.025;
+		double calculateTax() const override {
+			return estimatedValue() *0.025;
 		}
 		void displayDetails() const override{
 			cout<<"\n[COMMERCIAL PROPERTY]"<<endl;
@@ -156,15 +156,49 @@ class Agency{
 				propertyList[i]=nullptr;
 			}
 		}
-		void addProperty(Property* newProperty){
-			if(currentCount<MAX_PROPERTIES){
-				propertyList[currentCount]=newProperty;
-				currentCount++;
-				cout<<"Property added successfully!"<<endl;
+		void addProperty(){
+			if(currentCount>=MAX_PROPERTIES){
+				cout<<"Error:Agency inventory is full!"<<endl;
+				return;
+			}
+			int typechoice;
+			cout<<"\n Select Property Type:"<<endl;
+			cout<<"1. Residential Property"<<endl;
+			cout<<"2. Commercial Property"<<endl;
+			cout<<"Enter choice:";
+			cin>>typechoice;
+			if(typechoice!=1 && typechoice!=2)
+			{
+				cout<<"Invalid selection!"<<endl;
+				return;
+			}
+			int id ;
+			string addr;
+			double area,price;
+			cout<<"Enter Property ID:";
+			cin>>id;
+			cin.ignore();
+			cout<<"Enter Address:";
+			getline(cin,addr);
+			cout<<"Enter Area(sq.ft)";
+			cin>>area;
+			cout<<"Enter Asking Price(Rs.):";
+			cin>>price;
+			if(typechoice==1){
+				int beds;
+				cout<<"Enter no of bedrooms:";
+				cin>>beds;
+				propertyList[currentCount]=new ResidentialProperty(id,addr,price,area,beds);
 			}
 			else{
-				cout<<"Error:Agency inventory is full!"<<endl;
+				string bType;
+				cin.ignore();
+				cout<<"Enter Business Type:";
+				getline(cin,bType);
+				propertyList[currentCount]=new CommercialProperty(id,addr,price,area,bType);
 			}
+			currentCount++;
+			cout<<"Property Added Successfully!"<<endl;
 		}
 		void viewProperty()const{
 			if(currentCount==0){
@@ -176,6 +210,7 @@ class Agency{
 				propertyList[i]->displayDetails();
 			}
 		}
+		
 		void markAsSold(int searchId){
 			for(int i=0;i<currentCount;i++){
 				if(propertyList[i]->getID()==searchId){
@@ -189,22 +224,55 @@ class Agency{
 				return;
 			}
 		}
-		cout<<"Property with ID"<<searchId<<"was not found."<<endl;
+	    throw PropertyNotFoundException("Error:ID not found!");
 	}		
 };
 int main()
 {
-	int choice=0;
+	Agency Agent;
+    int choice=0;
+    real:
 	while(1)
 	{
 		cout<<"\n====Real Estate and Propery Listing====\n";
 		cout<<"1.Add Listing\n";
 		cout<<"2.View all Listings\n";
-		cout<<"3.Search Listings\n";
-		cout<<"4.Mark Property as Sold\n";
-		cout<<"5.Portfolio Summary Report\n";
-		cout<<"6.Save & Exit\n";
+		cout<<"3.Mark Property as Sold\n";
+		cout<<"4.Save & Exit\n";
 		cout<<"Enter your choice:";
 		cin>>choice;
-	return 0;
+		if(choice>1 && choice<6)
+		{
+			cout<<"Out of range:";
+			goto real;
+		}
+		else{
+		switch(choice){
+			case 1:
+				Agent.addProperty();
+				break;
+			case 2:
+				Agent.viewProperty();
+				break;
+			case 3:{
+				int searchId;
+				cout<<"Enter Property Id to mark as sold:";
+				cin>>searchId;
+				try{
+				Agent.markAsSold(searchId);
+			}
+			catch(const PropertyNotFoundException &e)
+			{
+				cout<<e.getMessage()<<endl;
+			}
+				break;
+			}
+			case 4:
+				cout<<"Goodbye!!"<<endl;
+				exit(0);
+				break;
+		}
+}
+}
+return 0;
 }
