@@ -241,7 +241,7 @@ int main()
 		cout<<"4.Save & Exit\n";
 		cout<<"Enter your choice:";
 		cin>>choice;
-		if(choice>1 && choice<6)
+		if(choice<1 || choice>4)
 		{
 			cout<<"Out of range:";
 			goto real;
