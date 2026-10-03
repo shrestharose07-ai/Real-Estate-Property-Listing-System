@@ -188,14 +188,14 @@ class Agency{
 				int beds;
 				cout<<"Enter no of bedrooms:";
 				cin>>beds;
-				propertyList[currentCount]=new ResidentialProperty(id,addr,price,area,beds);
+				propertyList[currentCount]=new ResidentialProperty(id,addr,area,price,beds);
 			}
 			else{
 				string bType;
 				cin.ignore();
 				cout<<"Enter Business Type:";
 				getline(cin,bType);
-				propertyList[currentCount]=new CommercialProperty(id,addr,price,area,bType);
+				propertyList[currentCount]=new CommercialProperty(id,addr,area,price,bType);
 			}
 			currentCount++;
 			cout<<"Property Added Successfully!"<<endl;
