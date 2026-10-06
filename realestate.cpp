@@ -172,22 +172,38 @@ class Agency{
 				cout<<"Invalid selection!"<<endl;
 				return;
 			}
+
+			ofstream writefile;
+			writefile.open("property_data.txt",ios::app);
+
+			if(!writefile)
+			{
+				cout<<"Error opening file for writing!"<<endl;
+				return;
+			}
+
 			int id ;
 			string addr;
 			double area,price;
+			writefile<<((typechoice==1)?"Residential":"Commercial")<<"\n";
 			cout<<"Enter Property ID:";
 			cin>>id;
+			writefile<<id<<"\n";
 			cin.ignore();
 			cout<<"Enter Address:";
 			getline(cin,addr);
+			writefile<<addr<<"\n";
 			cout<<"Enter Area(sq.ft)";
 			cin>>area;
+			writefile<<area<<"\n";
 			cout<<"Enter Asking Price(Rs.):";
 			cin>>price;
+			writefile<<price<<"\n";
 			if(typechoice==1){
 				int beds;
 				cout<<"Enter no of bedrooms:";
 				cin>>beds;
+				writefile<<beds<<"\n";
 				propertyList[currentCount]=new ResidentialProperty(id,addr,area,price,beds);
 			}
 			else{
@@ -195,33 +211,104 @@ class Agency{
 				cin.ignore();
 				cout<<"Enter Business Type:";
 				getline(cin,bType);
+				writefile<<bType<<"\n";
 				propertyList[currentCount]=new CommercialProperty(id,addr,area,price,bType);
 			}
+			writefile.close();
 			currentCount++;
 			cout<<"Property Added Successfully!"<<endl;
 		}
-		void viewProperty()const{
+
+		void loadproperty(){
+			ifstream readfile;
+			readfile.open("property_data.txt");
+			if(!readfile)
+			{
+				cout<<"No saved listings file found yet."<<endl;
+				return;
+			}
+			else{
+				while(!readfile.eof()){
+					int id;
+					string addr,type;
+					double area,price;
+					getline(readfile,type);
+					readfile>>id;
+					readfile.ignore();
+					getline(readfile,addr);
+					readfile>>area;
+					readfile>>price;
+					readfile.ignore();
+					if(type=="Residential"){
+						int beds;
+						readfile>>beds;
+						propertyList[currentCount]=new ResidentialProperty(id,addr,area,price,beds);
+					}
+					else if(type=="Commercial"){
+						string bType;
+						readfile.ignore();
+						getline(readfile,bType);
+						propertyList[currentCount]=new CommercialProperty(id,addr,area,price,bType);
+					}
+					currentCount++;
+					readfile.ignore();
+				}
+				readfile.close();
+			}
+		}
+
+		void viewProperty(){
 			if(currentCount==0){
 				cout<<"No properties currently in the inventory"<<endl;
 				return;
 			}
 			cout<<"\n===CURRENT LISTINGS===\n"<<endl;
 			for(int i=0;i<currentCount;i++){
+				loadproperty();
 				propertyList[i]->displayDetails();
 			}
 		}
 		
 		void markAsSold(int searchId){
-			for(int i=0;i<currentCount;i++){
-				if(propertyList[i]->getID()==searchId){
-				if(propertyList[i]->getIsSold()){
-					cout<<"Property is already marked as sold"<<endl;
-				}
-				else{
-					propertyList[i]->setSold(true);
-					cout<<"Property ID"<<searchId<<"sucessfully marked as Sold"<<endl;
-				}
+			fstream checkfile;
+			checkfile.open("property_data.txt", ios::in);
+			if(!checkfile)
+			{
+				cout<<"No saved listings file found yet."<<endl;
 				return;
+			}
+			else
+			{
+				while(!checkfile.eof())
+				{
+					string type;
+					int id;
+					getline(checkfile,type);
+					checkfile>>id;
+					if(id==searchId)
+					{
+						checkfile.close();
+						
+						checkfile.open("property_data.txt", ios::app);
+						
+
+						/*for(int i=0;i<currentCount;i++){
+							if(propertyList[i]->getID()==searchId){
+								if(propertyList[i]->getIsSold()){
+									cout<<"Property is already marked as sold"<<endl;
+								}
+								else{
+									propertyList[i]->setSold(true);
+									cout<<"Property ID "<<searchId<<" successfully marked as Sold"<<endl;
+								}
+								return;
+							}
+						}*/
+					}
+					checkfile.ignore();
+					getline(checkfile,type);
+					checkfile.ignore();
+				}
 			}
 		}
 	    throw PropertyNotFoundException("Error:ID not found!");
@@ -230,6 +317,7 @@ class Agency{
 int main()
 {
 	Agency Agent;
+	Agent.loadproperty();
     int choice=0;
     real:
 	while(1)
