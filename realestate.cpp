@@ -1,6 +1,8 @@
 #include<iostream> //used for input and output operation
 #include<string> //used to work with text/string variables
 #include<fstream> //used for reading and writing file
+#include<limits> //used to handle input stream limits
+#include<cstdlib> //used for exit() function 
 using namespace std;
 /*Maximum capacity of the property list
 (Global constant to prevent accidental modification)*/
@@ -53,7 +55,7 @@ class Property{
 		virtual void displayDetails()const{
 			cout<<"ID:"<<id<<endl;
 			cout<<"Address:"<<address<<endl;
-			cout<<"Area:"<<area<<"sq.ft"<<endl;
+			cout<<"Area:" <<area<<"sq.ft"<<endl;
 			cout<<"Price: Rs."<<price<<endl;
 			cout<<"Status:"<<(isSold ?"SOLD":"AVAILABLE")<<endl;
 		}
@@ -190,10 +192,12 @@ class Agency{
 			cin>>id;
 			writefile<<id<<"\n";
 			cin.ignore();
+			cin.ignore(numeric_limits<streamsize>::max(), '\n'); //Clear input buffer
 			cout<<"Enter Address:";
 			getline(cin,addr);
 			writefile<<addr<<"\n";
 			cout<<"Enter Area(sq.ft)";
+			cout<<"Enter Area(sq.ft):";
 			cin>>area;
 			writefile<<area<<"\n";
 			cout<<"Enter Asking Price(Rs.):";
@@ -208,7 +212,7 @@ class Agency{
 			}
 			else{
 				string bType;
-				cin.ignore();
+				cin.ignore(numeric_limits<streamsize>::max(), '\n'); //Clear input buffer
 				cout<<"Enter Business Type:";
 				getline(cin,bType);
 				writefile<<bType<<"\n";
@@ -309,6 +313,16 @@ class Agency{
 					getline(checkfile,type);
 					checkfile.ignore();
 				}
+			for(int i=0;i<currentCount;i++){
+				if(propertyList[i]->getID()==searchId){
+				if(propertyList[i]->getIsSold()){
+					cout<<"Property is already marked as sold"<<endl;
+				}
+				else{
+					propertyList[i]->setSold(true);
+					cout<<"Property ID "<<searchId<<" successfully marked as Sold."<<endl;
+				}
+				return;
 			}
 		}
 	    throw PropertyNotFoundException("Error:ID not found!");
@@ -319,22 +333,21 @@ int main()
 	Agency Agent;
 	Agent.loadproperty();
     int choice=0;
-    real:
-	while(1)
+	while(true)
 	{
-		cout<<"\n====Real Estate and Property Listing====\n";
-		cout<<"1.Add Listing\n";
-		cout<<"2.View all Listings\n";
-		cout<<"3.Mark Property as Sold\n";
-		cout<<"4.Save & Exit\n";
+		cout<<"====Real Estate and Property Listing===="<<endl;
+		cout<<"1.Add Listing"<<endl;
+		cout<<"2.View all Listings"<<endl;
+		cout<<"3.Mark Property as Sold"<<endl;
+		cout<<"4.Save & Exit"<<endl;
 		cout<<"Enter your choice:";
-		cin>>choice;
-		if(choice<1 || choice>4)
-		{
-			cout<<"Out of range:";
-			goto real;
+		if(!(cin>>choice)){
+			cout<<"Invalid input! Please enter a number between 1 and 4."<<endl;
+			cin.clear(); //Clear the error flag 
+			cin.ignore(numeric_limits<streamsize>::max(), '\n'); //Ignore the rest of the line
+			continue; //Prompt the user again
 		}
-		else{
+
 		switch(choice){
 			case 1:
 				Agent.addProperty();
@@ -344,7 +357,7 @@ int main()
 				break;
 			case 3:{
 				int searchId;
-				cout<<"Enter Property Id to mark as sold:";
+				cout<<"Enter Property Id to mark as sold:"<<endl;
 				cin>>searchId;
 				try{
 				Agent.markAsSold(searchId);
@@ -359,8 +372,10 @@ int main()
 				cout<<"Goodbye!!"<<endl;
 				exit(0);
 				break;
+			default:
+		       cout<<"Invalid choice! Please select a valid option."<<endl;
+			   break;
 		}
-}
 }
 return 0;
 }
