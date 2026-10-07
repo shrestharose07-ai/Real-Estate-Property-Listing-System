@@ -223,42 +223,47 @@ class Agency{
 		}
 
 		void loadproperty(){
-			ifstream readfile;
-			readfile.open("property_data.txt");
-			if(!readfile)
-			{
-				cout<<"No saved listings file found yet."<<endl;
-				return;
-			}
-			else{
-				while(!readfile.eof()){
-					int id;
-					string addr,type;
-					double area,price;
-					getline(readfile,type);
-					readfile>>id;
-					readfile.ignore();
-					getline(readfile,addr);
-					readfile>>area;
-					readfile>>price;
-					readfile.ignore();
-					if(type=="Residential"){
-						int beds;
-						readfile>>beds;
-						propertyList[currentCount]=new ResidentialProperty(id,addr,area,price,beds);
-					}
-					else if(type=="Commercial"){
-						string bType;
-						readfile.ignore();
-						getline(readfile,bType);
-						propertyList[currentCount]=new CommercialProperty(id,addr,area,price,bType);
-					}
-					currentCount++;
-					readfile.ignore();
-				}
-				readfile.close();
-			}
-		}
+    ifstream readfile("property_data.txt");
+    if(!readfile.is_open())
+    {
+        return; // File doesn't exist yet, safe to proceed
+    }
+
+    string type;
+    while(getline(readfile, type)){
+        if(type.empty()) continue;
+        
+        int id;
+        string addr;
+        double area, price;
+
+        if(!(readfile >> id)) break;
+        readfile.ignore(numeric_limits<streamsize>::max(), '\n');
+        
+        if(!getline(readfile, addr)) break;
+        if(!(readfile >> area >> price)) break;
+        readfile.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        if(type == "Residential"){
+            int beds;
+            if(readfile >> beds){
+                readfile.ignore(numeric_limits<streamsize>::max(), '\n');
+                if(currentCount < MAX_PROPERTIES){
+                    propertyList[currentCount++] = new ResidentialProperty(id, addr, area, price, beds);
+                }
+            }
+        }
+        else if(type == "Commercial"){
+            string bType;
+            if(getline(readfile, bType)){
+                if(currentCount < MAX_PROPERTIES){
+                    propertyList[currentCount++] = new CommercialProperty(id, addr, area, price, bType);
+                }
+            }
+        }
+    }
+    readfile.close();
+}
 
 		void viewProperty(){
 			if(currentCount==0){
@@ -312,6 +317,7 @@ class Agency{
 					getline(checkfile,type);
 					checkfile.ignore();
 				}
+			}
 			for(int i=0;i<currentCount;i++){
 				if(propertyList[i]->getID()==searchId){
 				if(propertyList[i]->getIsSold()){
@@ -375,6 +381,6 @@ void realEstateMenu()
 		       cout<<"Invalid choice! Please select a valid option."<<endl;
 			   break;
 		}
-}
-return 0;
+	}
+return;
 }

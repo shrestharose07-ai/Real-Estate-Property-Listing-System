@@ -1,7 +1,7 @@
 #include<iostream>
 #include<fstream>
 #include<string.h>
-#include "realstate.h"
+#include "realestate.h"
 using namespace std;
 
 class UserAccount{
@@ -90,6 +90,8 @@ void UserAccount::login()
 	if(count==1)
 	{
 		cout<<userID<<"\n Your LOGIN is successfull \n thanks for logging in! \n";
+		system("pause");
+		system("cls");
 		realEstateMenu();
 	}
 	else{
