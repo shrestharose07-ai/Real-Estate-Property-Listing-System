@@ -191,12 +191,10 @@ class Agency{
 			cout<<"Enter Property ID:";
 			cin>>id;
 			writefile<<id<<"\n";
-			cin.ignore();
 			cin.ignore(numeric_limits<streamsize>::max(), '\n'); //Clear input buffer
 			cout<<"Enter Address:";
 			getline(cin,addr);
 			writefile<<addr<<"\n";
-			cout<<"Enter Area(sq.ft)";
 			cout<<"Enter Area(sq.ft):";
 			cin>>area;
 			writefile<<area<<"\n";
