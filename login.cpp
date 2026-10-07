@@ -3,9 +3,23 @@
 #include<string.h>
 using namespace std;
 
-void login();
-void registration();
-void forgot();
+class UserAccount{
+	public:
+		void login();
+		void registration();
+		void forgot();
+};
+
+UserAccount account;
+void login(){
+	account.login();
+}
+void registration(){
+	account.registration();
+}
+void forgot(){
+	account.forgot();
+}
 
 int main()
 {
@@ -48,7 +62,7 @@ int main()
 
 }
 
-void login()
+void UserAccount::login()
 {
 	int count=0;
 	string userID, password, id, pass;
@@ -82,7 +96,7 @@ void login()
 		main();
 	}
 }
-void registration()
+void UserAccount::registration()
 {
 	string ruserID, rpassword, rid, rpass;
 	system("cls");
@@ -99,7 +113,7 @@ void registration()
 	
 	
 }
-void forgot()
+void UserAccount::forgot()
 {
 	int option;
 	system("cls");
