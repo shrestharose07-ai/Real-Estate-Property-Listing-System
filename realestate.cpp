@@ -3,6 +3,7 @@
 #include<fstream> //used for reading and writing file
 #include<limits> //used to handle input stream limits
 #include<cstdlib> //used for exit() function 
+#include<realestate.h>
 using namespace std;
 /*Maximum capacity of the property list
 (Global constant to prevent accidental modification)*/
@@ -326,7 +327,7 @@ class Agency{
 	    throw PropertyNotFoundException("Error:ID not found!");
 	}		
 };
-int main()
+void realEstateMenu()
 {
 	Agency Agent;
 	Agent.loadproperty();
