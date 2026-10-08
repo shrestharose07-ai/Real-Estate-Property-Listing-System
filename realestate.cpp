@@ -382,9 +382,9 @@ class Agency{
 			cout<<BOLD<<"Sold Properties: "<<RESET<<soldCount<<endl;
 			cout<<BOLD<<"Residential Properties: "<<RESET<<res<<endl;
 			cout<<BOLD<<"Commercial Properties: "<<RESET<<com<<endl;
-			cout<<BOLD<<"Total Price: $"<<RESET<<totalPrice<<endl;
+			cout<<BOLD<<"Total Price: Rs"<<RESET<<totalPrice<<endl;
 			cout<<BOLD<<"Total Area: "<<RESET<<totalArea<<" sq.ft"<<endl;
-			cout<<BOLD<<"Total Tax: $"<<RESET<<totalTax<<endl;
+			cout<<BOLD<<"Total Tax: Rs"<<RESET<<totalTax<<endl;
 			for(int i=0;i<currentCount;i++){
 				propertyList[i]->displayDetails();
 			}
