@@ -11,3 +11,15 @@ er
 45
 456
 tyy
+Commercial
+3
+kathmandu
+890000
+56789
+office
+Commercial
+3
+kathmandu 
+34567
+678900
+office

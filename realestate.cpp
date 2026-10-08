@@ -5,6 +5,15 @@
 #include<cstdlib> //used for exit() function 
 #include "realestate.h"
 using namespace std;
+//ANSII color codes for console text formatting
+#define RESET   "\033[0m"
+#define BOLD    "\033[1m"       /* Bold */	
+#define RED     "\033[31m"      /* Red */
+#define GREEN   "\033[32m"      /* Green */
+#define YELLOW  "\033[33m"      /* Yellow */
+#define BLUE    "\033[34m"      /* Blue */
+#define MAGENTA "\033[35m"      /* Magenta */
+#define CYAN    "\033[36m"      /* Cyan */
 /*Maximum capacity of the property list
 (Global constant to prevent accidental modification)*/
 const int MAX_PROPERTIES=50; 
@@ -52,13 +61,22 @@ class Property{
 		virtual ~Property(){}
 		virtual double calculateTax() const=0;//for tax
 		virtual double estimatedValue() const=0; //estimated value 
+		virtual string getType() const=0; //returns property type
 		
-		virtual void displayDetails()const{
-			cout<<"ID:"<<id<<endl;
-			cout<<"Address:"<<address<<endl;
-			cout<<"Area:" <<area<<"sq.ft"<<endl;
-			cout<<"Price: Rs."<<price<<endl;
-			cout<<"Status:"<<(isSold ?"SOLD":"AVAILABLE")<<endl;
+		virtual void saveToFile(ofstream &writefile) const{ //Save property details to file
+			writefile<<getType()<<"\n";
+			writefile<<id<<"\n";
+			writefile<<address<<"\n";
+			writefile<<area<<"\n";
+			writefile<<price<<"\n";
+			writefile<<(isSold ? 1 : 0)<<"\n"; //Save sold status as 1 or 0
+		}
+		virtual void displayDetails()const{ //Display property details to console
+			cout<<BOLD<<"ID:"<<RESET<<YELLOW<<id<<endl;
+			cout<<BOLD<<"Address:"<<RESET<<address<<endl;
+			cout<<BOLD<<"Area:" <<RESET<<area<<"sq.ft"<<RESET<<endl;
+			cout<<BOLD<<"Price: Rs."<<RESET<<price<<endl;
+			cout<<BOLD<<"Status:"<<RESET<<(isSold ?(RED+string("SOLD")+RESET):(GREEN+string("AVAILABLE")+RESET))<<endl;
 		}
 		
 		int getID() const{
@@ -101,12 +119,19 @@ class ResidentialProperty: public Property{
 		double calculateTax() const override{ //redines pure virtual function to compute tax
 			return estimatedValue() *0.012;
 		}
+		string getType() const override{
+			return "Residential";
+		}
+		void saveToFile(ofstream &writefile) const override{
+			Property::saveToFile(writefile);
+			writefile<<bedrooms<<"\n"; //Save bedroom count for residential property
+		}
 		void displayDetails() const override{
-			cout<<"\n[RESIDENTIAL PROPERTY]"<<endl;
+			cout<<"\n"<<BOLD<<MAGENTA<<"[RESIDENTIAL PROPERTY]"<<RESET<<endl;
 			Property::displayDetails();
-			cout<<"Bedrooms:"<<bedrooms<<endl;
-			cout<<"Estimated Market Values: Rs."<<estimatedValue()<<endl;
-			cout<<"Calculated Property Tax: Rs."<<calculateTax()<<endl;
+			cout<<BOLD<<"Bedrooms:"<<RESET<<YELLOW<<bedrooms<<RESET<<endl;
+			cout<<BOLD<<"Estimated Market Values: Rs."<<RESET<<YELLOW<<estimatedValue()<<RESET<<endl;
+			cout<<BOLD<<"Calculated Property Tax: Rs."<<RESET<<YELLOW<<calculateTax()<<RESET<<endl;
 			cout<<"------------------------"<<endl;
 		}
 };
@@ -126,12 +151,19 @@ class CommercialProperty:public Property{
 		double calculateTax() const override {
 			return estimatedValue() *0.025;
 		}
+		string getType() const override{
+			return "Commercial";
+		}
+		void saveToFile(ofstream &writefile) const override{
+			Property::saveToFile(writefile);
+			writefile<<businessType<<"\n"; //Save business type for commercial property
+		}
 		void displayDetails() const override{
-			cout<<"\n[COMMERCIAL PROPERTY]"<<endl;
+			cout<<"\n"<<BOLD<<BLUE<<"[COMMERCIAL PROPERTY]"<<RESET<<endl;
 			Property::displayDetails();
-			cout<<"Business Type:"<<businessType<<endl;
-			cout<<"Estimated Market Values: Rs."<<estimatedValue()<<endl;;
-			cout<<"Calculated Property Tax: Rs."<<calculateTax()<<endl;
+			cout<<BOLD<<"Business Type:"<<RESET<<YELLOW<<businessType<<RESET<<endl;
+			cout<<BOLD<<"Estimated Market Values: Rs."<<RESET<<YELLOW<<estimatedValue()<<RESET<<endl;
+			cout<<BOLD<<"Calculated Property Tax: Rs."<<RESET<<YELLOW<<calculateTax()<<RESET<<endl;
 			cout<<"------------------------"<<endl;
 		}
 		string getBusinessType() const{
@@ -153,15 +185,17 @@ class Agency{
 				propertyList[i]=nullptr;
 			}
 		}
+		Agency(const Agency&)=delete; //Disable copy constructor to prevent shallow copy issues
+		Agency& operator=(const Agency&)=delete; //Disable assignment operator to prevent shallow
 		~Agency(){
-			for(int i=0;i<MAX_PROPERTIES;i++){
+			for(int i=0;i<currentCount;i++){
 				delete propertyList[i];
 				propertyList[i]=nullptr;
 			}
 		}
 		void addProperty(){
 			if(currentCount>=MAX_PROPERTIES){
-				cout<<"Error:Agency inventory is full!"<<endl;
+				cout<<RED<<"Error:Agency inventory is full!"<<RESET<<endl;
 				return;
 			}
 			int typechoice;
@@ -170,59 +204,47 @@ class Agency{
 			cout<<"2. Commercial Property"<<endl;
 			cout<<"Enter choice:";
 			cin>>typechoice;
+			Property* newProperty=nullptr;
 			if(typechoice!=1 && typechoice!=2)
 			{
-				cout<<"Invalid selection!"<<endl;
+				cout<<RED<<"Invalid selection!"<<RESET<<endl;
 				return;
 			}
-
-			ofstream writefile;
-			writefile.open("property_data.txt",ios::app);
-
-			if(!writefile)
-			{
-				cout<<"Error opening file for writing!"<<endl;
-				return;
-			}
-
 			int id ;
 			string addr;
 			double area,price;
-			writefile<<((typechoice==1)?"Residential":"Commercial")<<"\n";
 			cout<<"Enter Property ID:";
 			cin>>id;
-			writefile<<id<<"\n";
 			cin.ignore(numeric_limits<streamsize>::max(), '\n'); //Clear input buffer
+
 			cout<<"Enter Address:";
 			getline(cin,addr);
-			writefile<<addr<<"\n";
+
 			cout<<"Enter Area(sq.ft):";
 			cin>>area;
-			writefile<<area<<"\n";
+
 			cout<<"Enter Asking Price(Rs.):";
 			cin>>price;
-			writefile<<price<<"\n";
+
 			if(typechoice==1){
 				int beds;
 				cout<<"Enter no of bedrooms:";
 				cin>>beds;
-				writefile<<beds<<"\n";
-				propertyList[currentCount]=new ResidentialProperty(id,addr,area,price,beds);
+				newProperty=new ResidentialProperty(id,addr,area,price,beds);
 			}
 			else{
 				string bType;
 				cin.ignore(numeric_limits<streamsize>::max(), '\n'); //Clear input buffer
 				cout<<"Enter Business Type:";
 				getline(cin,bType);
-				writefile<<bType<<"\n";
-				propertyList[currentCount]=new CommercialProperty(id,addr,area,price,bType);
+				newProperty=new CommercialProperty(id,addr,area,price,bType);
 			}
-			writefile.close();
-			currentCount++;
-			cout<<"Property Added Successfully!"<<endl;
+            propertyList[currentCount++]=newProperty ;//Increment count after adding new property
+			saveAllPropertiesToFile(); //Save to file after adding new property
+			cout<<GREEN<<"Property added successfully!"<<RESET<<endl;
 		}
 
-		void loadproperty(){
+	void loadproperty(){
     ifstream readfile("property_data.txt");
     if(!readfile.is_open())
     {
@@ -233,8 +255,8 @@ class Agency{
     while(getline(readfile, type)){
         if(type.empty()) continue;
         
-        int id;
-        string addr;
+        int id,soldInt;
+        string addr,bType;
         double area, price;
 
         if(!(readfile >> id)) break;
@@ -244,12 +266,13 @@ class Agency{
         if(!(readfile >> area >> price)) break;
         readfile.ignore(numeric_limits<streamsize>::max(), '\n');
 
+        Property* loadProperty = nullptr;
         if(type == "Residential"){
             int beds;
             if(readfile >> beds){
                 readfile.ignore(numeric_limits<streamsize>::max(), '\n');
                 if(currentCount < MAX_PROPERTIES){
-                    propertyList[currentCount++] = new ResidentialProperty(id, addr, area, price, beds);
+                    loadProperty = new ResidentialProperty(id, addr, area, price, beds);
                 }
             }
         }
@@ -257,80 +280,145 @@ class Agency{
             string bType;
             if(getline(readfile, bType)){
                 if(currentCount < MAX_PROPERTIES){
-                    propertyList[currentCount++] = new CommercialProperty(id, addr, area, price, bType);
+                    loadProperty = new CommercialProperty(id, addr, area, price, bType);
                 }
             }
         }
-    }
+    if(loadProperty){
+		loadProperty->isSold = (soldInt == 1);
+		if(currentCount < MAX_PROPERTIES){
+			propertyList[currentCount++] = loadProperty;
+		} else {
+			delete loadProperty; // Prevent memory leak if max capacity is reached
+		}
+	}
+	}
     readfile.close();
 }
-
 		void viewProperty(){
 			if(currentCount==0){
-				cout<<"No properties currently in the inventory"<<endl;
+				cout<<YELLOW<<"No properties currently in the inventory"<<RESET<<endl;
 				return;
 			}
-			cout<<"\n===CURRENT LISTINGS===\n"<<endl;
+			cout<<"\n"<<BOLD<<CYAN<<"===CURRENT LISTINGS==="<<RESET<<"\n"<<endl;
 			for(int i=0;i<currentCount;i++){
-				loadproperty();
 				propertyList[i]->displayDetails();
 			}
 		}
-		
-		void markAsSold(int searchId){
-			fstream checkfile;
-			checkfile.open("property_data.txt", ios::in);
-			if(!checkfile)
-			{
-				cout<<"No saved listings file found yet."<<endl;
+		void searchProperty(){
+			if(currentCount==0){
+				cout<<YELLOW<<"No properties currently in the inventory"<<RESET<<endl;
 				return;
 			}
-			else
-			{
-				while(!checkfile.eof())
-				{
-					string type;
-					int id;
-					getline(checkfile,type);
-					checkfile>>id;
-					if(id==searchId)
-					{
-						checkfile.close();
-						
-						checkfile.open("property_data.txt", ios::app);
-						
-
-						/*for(int i=0;i<currentCount;i++){
-							if(propertyList[i]->getID()==searchId){
-								if(propertyList[i]->getIsSold()){
-									cout<<"Property is already marked as sold"<<endl;
-								}
-								else{
-									propertyList[i]->setSold(true);
-									cout<<"Property ID "<<searchId<<" successfully marked as Sold"<<endl;
-								}
-								return;
-							}
-						}*/
+			int choice;
+			cout<<BOLD<<CYAN<<"Search by: 1.ID 2.Address 3.Price Range"<<RESET<<endl;
+			cin>>choice;
+			bool found=false;
+			if(choice==1){
+				int searchId;
+				cout<<"Enter Property ID to search:"<<endl;
+				cin>>searchId;
+				for(int i=0;i<currentCount;i++){
+					if(propertyList[i]->getID()==searchId){
+						propertyList[i]->displayDetails();
+						found=true;
+						break;
 					}
-					checkfile.ignore();
-					getline(checkfile,type);
-					checkfile.ignore();
 				}
 			}
+			else if(choice==2){
+				string searchAddr;
+				cout<<"Enter Address to search:"<<endl;
+				cin.ignore(numeric_limits<streamsize>::max(), '\n'); //Clear input buffer
+				getline(cin,searchAddr);
+				for(int i=0;i<currentCount;i++){
+					if(propertyList[i]->address.find(searchAddr)!=string::npos){
+						propertyList[i]->displayDetails();
+						found=true;
+					}
+				}
+			}
+			else if(choice==3){
+				double minPrice,maxPrice;
+				cout<<"Enter Minimum Price:"<<endl;
+				cin>>minPrice;
+				cout<<"Enter Maximum Price:"<<endl;
+				cin>>maxPrice;
+				for(int i=0;i<currentCount;i++){
+					if(propertyList[i]->getPrice()>=minPrice && propertyList[i]->getPrice()<=maxPrice){
+						propertyList[i]->displayDetails();
+						found=true;
+					}
+				}
+			}
+			else{
+				cout<<RED<<"Invalid choice!"<<RESET<<endl;
+				return;
+			}
+			if(!found){
+				cout<<RED<<"Property not found!"<<RESET<<endl;
+			}
+		}
+		void displayPortfolio(){
+			if(currentCount==0){
+				cout<<YELLOW<<"No properties currently in the inventory"<<RESET<<endl;
+				return;
+			} 
+			int soldCount=0,res=0,com=0;
+			double totalPrice=0.0,totalArea=0.0,totalTax=0.0;
+			for(int i=0;i<currentCount;i++){
+				if(propertyList[i]->getIsSold()){
+					soldCount++;
+				}
+				if(propertyList[i]->getType()=="Residential"){
+					res++;
+				}
+				else if(propertyList[i]->getType()=="Commercial"){
+					com++;
+				}
+				totalPrice=totalPrice+propertyList[i]->getPrice();
+				totalArea=totalArea+propertyList[i]->getArea();
+				totalTax=totalTax+propertyList[i]->calculateTax();
+
+			}
+			cout<<"\n"<<BOLD<<CYAN<<"===PORTFOLIO SUMMARY==="<<RESET<<"\n"<<endl;
+			cout<<BOLD<<"Total Properties: "<<RESET<<currentCount<<endl;
+			cout<<BOLD<<"Sold Properties: "<<RESET<<soldCount<<endl;
+			cout<<BOLD<<"Residential Properties: "<<RESET<<res<<endl;
+			cout<<BOLD<<"Commercial Properties: "<<RESET<<com<<endl;
+			cout<<BOLD<<"Total Price: $"<<RESET<<totalPrice<<endl;
+			cout<<BOLD<<"Total Area: "<<RESET<<totalArea<<" sq.ft"<<endl;
+			cout<<BOLD<<"Total Tax: $"<<RESET<<totalTax<<endl;
+			for(int i=0;i<currentCount;i++){
+				propertyList[i]->displayDetails();
+			}
+		}
+		void saveAllPropertiesToFile(){
+			ofstream writefile("property_data.txt");
+			if(!writefile)
+			{
+				cout<<RED<<"Error opening file for writing!"<<RESET<<endl;
+				return;
+			}
+			for(int i=0;i<currentCount;i++){
+				propertyList[i]->saveToFile(writefile);
+			}
+			writefile.close();
+		}
+		void markAsSold(int searchId){
 			for(int i=0;i<currentCount;i++){
 				if(propertyList[i]->getID()==searchId){
 				if(propertyList[i]->getIsSold()){
-					cout<<"Property is already marked as sold"<<endl;
+					cout<<YELLOW<<"Property is already marked as sold"<<RESET<<endl;
 				}
 				else{
 					propertyList[i]->setSold(true);
-					cout<<"Property ID "<<searchId<<" successfully marked as Sold."<<endl;
+					cout<<GREEN<<"Property ID "<<searchId<<" successfully marked as Sold."<<RESET<<endl;
 				}
 				return;
 			}
 		}
-	    throw PropertyNotFoundException("Error:ID not found!");
+	    throw PropertyNotFoundException(RED+string("Error:ID not found!")+RESET);
 	}		
 };
 void realEstateMenu()
@@ -340,14 +428,16 @@ void realEstateMenu()
     int choice=0;
 	while(true)
 	{
-		cout<<"====Real Estate and Property Listing===="<<endl;
+		cout<<BOLD<<YELLOW<<"====Real Estate and Property Listing===="<<RESET<<endl;
 		cout<<"1.Add Listing"<<endl;
 		cout<<"2.View all Listings"<<endl;
-		cout<<"3.Mark Property as Sold"<<endl;
-		cout<<"4.Save & Exit"<<endl;
+		cout<<"3.Search Property"<<endl;
+		cout<<"4.Mark Property as Sold"<<endl;
+		cout<<"5.Display Portfolio Summary"<<endl;
+		cout<<"6.Save & Exit"<<endl;
 		cout<<"Enter your choice:";
 		if(!(cin>>choice)){
-			cout<<"Invalid input! Please enter a number between 1 and 4."<<endl;
+			cout<<RED<<"Invalid input! Please enter a number between 1 and 6."<<RESET<<endl;
 			cin.clear(); //Clear the error flag 
 			cin.ignore(numeric_limits<streamsize>::max(), '\n'); //Ignore the rest of the line
 			continue; //Prompt the user again
@@ -360,7 +450,10 @@ void realEstateMenu()
 			case 2:
 				Agent.viewProperty();
 				break;
-			case 3:{
+			case 3:
+				Agent.searchProperty();
+				break;	
+			case 4:{
 				int searchId;
 				cout<<"Enter Property Id to mark as sold:"<<endl;
 				cin>>searchId;
@@ -373,14 +466,22 @@ void realEstateMenu()
 			}
 				break;
 			}
-			case 4:
-				cout<<"Goodbye!!"<<endl;
-				exit(0);
+			case 5:
+				Agent.displayPortfolio();
+				break;
+			case 6:
+				Agent.saveAllPropertiesToFile();	
+				cout<<GREEN<<"Goodbye!!"<<RESET<<endl;
 				break;
 			default:
-		       cout<<"Invalid choice! Please select a valid option."<<endl;
+		       cout<<RED<<"Invalid choice! Please select a valid option."<<RESET<<endl;
 			   break;
 		}
 	}
 return;
+}
+int main()
+{
+	realEstateMenu();
+	return 0;
 }
