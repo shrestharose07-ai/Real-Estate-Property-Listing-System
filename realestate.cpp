@@ -245,56 +245,52 @@ class Agency{
 		}
 
 	void loadproperty(){
-    ifstream readfile("property_data.txt");
-    if(!readfile.is_open())
-    {
-        return; // File doesn't exist yet, safe to proceed
-    }
-
-    string type;
-    while(getline(readfile, type)){
-        if(type.empty()) continue;
-        
-        int id,soldInt;
-        string addr,bType;
-        double area, price;
-
-        if(!(readfile >> id)) break;
-        readfile.ignore(numeric_limits<streamsize>::max(), '\n');
-        
-        if(!getline(readfile, addr)) break;
-        if(!(readfile >> area >> price>>soldInt)) break;
-        readfile.ignore(numeric_limits<streamsize>::max(), '\n');
-
-        Property* loadProperty = nullptr;
-        if(type == "Residential"){
-            int beds;
-            if(readfile >> beds){
-                readfile.ignore(numeric_limits<streamsize>::max(), '\n');
-                if(currentCount < MAX_PROPERTIES){
-                    loadProperty = new ResidentialProperty(id, addr, area, price, beds);
-                }
-            }
-        }
-        else if(type == "Commercial"){
-            string bType;
-            if(getline(readfile, bType)){
-                if(currentCount < MAX_PROPERTIES){
-                    loadProperty = new CommercialProperty(id, addr, area, price, bType);
-                }
-            }
-        }
-    if(loadProperty){
-		loadProperty->isSold = (soldInt == 1);
-		if(currentCount < MAX_PROPERTIES){
-			propertyList[currentCount++] = loadProperty;
-		} else {
-			delete loadProperty; // Prevent memory leak if max capacity is reached
+		ifstream readfile("property_data.txt");
+		if(!readfile.is_open()){
+			return; // File doesn't exist yet, safe to proceed
 		}
+
+		string type;
+		while(getline(readfile, type)){
+			if(type.empty()) continue;
+
+			int id, soldInt;
+			string addr;
+			double area, price;
+
+			if(!(readfile >> id)) break;
+			readfile.ignore(numeric_limits<streamsize>::max(), '\n');
+			if(!getline(readfile, addr)) break;
+			if(!(readfile >> area >> price >> soldInt)) break;
+			readfile.ignore(numeric_limits<streamsize>::max(), '\n');
+
+			Property* loadProperty = nullptr;
+			if(type == "Residential"){
+				int beds;
+				if(!(readfile >> beds)) break;
+				readfile.ignore(numeric_limits<streamsize>::max(), '\n');
+				loadProperty = new ResidentialProperty(id, addr, area, price, beds);
+			}
+			else if(type == "Commercial"){
+				string businessType;
+				if(!getline(readfile, businessType)) break;
+				loadProperty = new CommercialProperty(id, addr, area, price, businessType);
+			}
+			else{
+				break;
+			}
+
+			loadProperty->isSold = (soldInt == 1);
+			if(currentCount < MAX_PROPERTIES){
+				propertyList[currentCount++] = loadProperty;
+			}
+			else{
+				delete loadProperty;
+				break;
+			}
+		}
+		readfile.close();
 	}
-	}
-    readfile.close();
-}
 		void viewProperty(){
 			if(currentCount==0){
 				cout<<YELLOW<<"No properties currently in the inventory"<<RESET<<endl;
