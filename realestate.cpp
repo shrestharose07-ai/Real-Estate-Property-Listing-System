@@ -72,7 +72,7 @@ class Property{
 			writefile<<(isSold ? 1 : 0)<<"\n"; //Save sold status as 1 or 0
 		}
 		virtual void displayDetails()const{ //Display property details to console
-			cout<<BOLD<<"ID:"<<RESET<<YELLOW<<id<<endl;
+			cout<<BOLD<<"ID:"<<YELLOW<<RESET<<id<<endl;
 			cout<<BOLD<<"Address:"<<RESET<<address<<endl;
 			cout<<BOLD<<"Area:" <<RESET<<area<<"sq.ft"<<RESET<<endl;
 			cout<<BOLD<<"Price: Rs."<<RESET<<price<<endl;
@@ -263,7 +263,7 @@ class Agency{
         readfile.ignore(numeric_limits<streamsize>::max(), '\n');
         
         if(!getline(readfile, addr)) break;
-        if(!(readfile >> area >> price)) break;
+        if(!(readfile >> area >> price>>soldInt)) break;
         readfile.ignore(numeric_limits<streamsize>::max(), '\n');
 
         Property* loadProperty = nullptr;
@@ -413,6 +413,7 @@ class Agency{
 				}
 				else{
 					propertyList[i]->setSold(true);
+					saveAllPropertiesToFile(); //Update file after marking as sold
 					cout<<GREEN<<"Property ID "<<searchId<<" successfully marked as Sold."<<RESET<<endl;
 				}
 				return;
@@ -472,7 +473,7 @@ void realEstateMenu()
 			case 6:
 				Agent.saveAllPropertiesToFile();	
 				cout<<GREEN<<"Goodbye!!"<<RESET<<endl;
-				break;
+				return;
 			default:
 		       cout<<RED<<"Invalid choice! Please select a valid option."<<RESET<<endl;
 			   break;
