@@ -3,9 +3,13 @@
 #include<fstream> //used for reading and writing file
 #include<limits> //used to handle input stream limits
 #include<cstdlib> //used for exit() function 
+#include<algorithm> //used for transform function(case sensitive search)
+#include<iomanip> //used for output formatting
+#include<cctype> //used for tolower function
+#include<cmath> //used for mathematical operations
 #include "realestate.h"
 using namespace std;
-//ANSII color codes for console text formatting
+//ANSI color codes for console text formatting
 #define RESET   "\033[0m"
 #define BOLD    "\033[1m"       /* Bold */	
 #define RED     "\033[31m"      /* Red */
@@ -22,7 +26,7 @@ class PropertyNotFoundException{
 	string message;
 	public: 
 	//constructor to set error message
-	PropertyNotFoundException(string msg){
+	 PropertyNotFoundException(string msg){
 		message=msg;
 	}
 	string getMessage() const{
@@ -46,7 +50,8 @@ class Property{
 			address="";
 			area=0.0;
 			price=0.0;
-			isSold=false;		
+			isSold=false;	
+			totalListings++; //Increment static count whenever a new property is created	
 		}
 		Property(int i,string addr,double a,double pc)
 		{
@@ -58,7 +63,11 @@ class Property{
 			totalListings++;//Increment static count whenever a new property is created
 		}
 		//virtual destructor for clean memory deallocation
-		virtual ~Property(){}
+		virtual ~Property(){
+			if(totalListings>0){
+				totalListings--;//Decrement static count whenever a property is destroyed
+			}
+		}
 		virtual double calculateTax() const=0;//for tax
 		virtual double estimatedValue() const=0; //estimated value 
 		virtual string getType() const=0; //returns property type
@@ -72,15 +81,18 @@ class Property{
 			writefile<<(isSold ? 1 : 0)<<"\n"; //Save sold status as 1 or 0
 		}
 		virtual void displayDetails()const{ //Display property details to console
-			cout<<BOLD<<"ID:"<<YELLOW<<RESET<<id<<endl;
+			cout<<BOLD<<"ID:"<<YELLOW<<id<<RESET<<endl;
 			cout<<BOLD<<"Address:"<<RESET<<address<<endl;
-			cout<<BOLD<<"Area:" <<RESET<<area<<"sq.ft"<<RESET<<endl;
-			cout<<BOLD<<"Price: Rs."<<RESET<<price<<endl;
+			cout<<BOLD<<"Area:" <<RESET<<fixed<<setprecision(2)<<area<<"sq.ft"<<RESET<<endl;
+			cout<<BOLD<<"Price: Rs."<<RESET<<fixed<<setprecision(2)<<price<<endl;
 			cout<<BOLD<<"Status:"<<RESET<<(isSold ?(RED+string("SOLD")+RESET):(GREEN+string("AVAILABLE")+RESET))<<endl;
 		}
 		
 		int getID() const{
 			return id; //returns property id
+		}
+		string getAddress() const{
+			return address; //returns property address
 		}
 		double getArea() const{
 			return area; //returns area
@@ -130,8 +142,8 @@ class ResidentialProperty: public Property{
 			cout<<"\n"<<BOLD<<MAGENTA<<"[RESIDENTIAL PROPERTY]"<<RESET<<endl;
 			Property::displayDetails();
 			cout<<BOLD<<"Bedrooms:"<<RESET<<YELLOW<<bedrooms<<RESET<<endl;
-			cout<<BOLD<<"Estimated Market Values: Rs."<<RESET<<YELLOW<<estimatedValue()<<RESET<<endl;
-			cout<<BOLD<<"Calculated Property Tax: Rs."<<RESET<<YELLOW<<calculateTax()<<RESET<<endl;
+			cout<<BOLD<<"Estimated Market Values: Rs."<<RESET<<YELLOW<<fixed<<setprecision(2)<<estimatedValue()<<RESET<<endl;
+			cout<<BOLD<<"Calculated Property Tax: Rs."<<RESET<<YELLOW<<fixed<<setprecision(2)<<calculateTax()<<RESET<<endl;
 			cout<<"------------------------"<<endl;
 		}
 };
@@ -162,8 +174,8 @@ class CommercialProperty:public Property{
 			cout<<"\n"<<BOLD<<BLUE<<"[COMMERCIAL PROPERTY]"<<RESET<<endl;
 			Property::displayDetails();
 			cout<<BOLD<<"Business Type:"<<RESET<<YELLOW<<businessType<<RESET<<endl;
-			cout<<BOLD<<"Estimated Market Values: Rs."<<RESET<<YELLOW<<estimatedValue()<<RESET<<endl;
-			cout<<BOLD<<"Calculated Property Tax: Rs."<<RESET<<YELLOW<<calculateTax()<<RESET<<endl;
+			cout<<BOLD<<"Estimated Market Values: Rs."<<RESET<<YELLOW<<fixed<<setprecision(2)<<estimatedValue()<<RESET<<endl;
+			cout<<BOLD<<"Calculated Property Tax: Rs."<<RESET<<YELLOW<<fixed<<setprecision(2)<<calculateTax()<<RESET<<endl;
 			cout<<"------------------------"<<endl;
 		}
 		string getBusinessType() const{
@@ -193,7 +205,8 @@ class Agency{
 				propertyList[i]=nullptr;
 			}
 		}
-		void addProperty(){
+
+	void addProperty(){
     if(currentCount >= MAX_PROPERTIES){
         cout << RED << "Error: Agency inventory is full!" << RESET << endl;
         return;
@@ -234,8 +247,12 @@ class Agency{
 
     cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Clear buffer
     string addr;
-    cout << "Enter Address: ";
-    getline(cin, addr);
+	while (true) {
+		cout << "Enter Address: ";
+		getline(cin, addr);
+		if (!addr.empty()) break; // Ensure address is not empty
+		cout << RED << "Invalid input! Address cannot be empty." << RESET << endl;
+	}
 
     double area;
     // Validate Positive Area (> 0)
@@ -271,8 +288,12 @@ class Agency{
     else {
         string bType;
         cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Clear buffer
+		while(true) {
         cout << "Enter Business Type: ";
         getline(cin, bType);
+        if (!bType.empty()) break; // Ensure business type is not empty
+        cout << RED << "Invalid input! Business type cannot be empty." << RESET << endl;
+		}
         newProperty = new CommercialProperty(id, addr, area, price, bType);
     }
 
@@ -298,7 +319,10 @@ class Agency{
 			if(!(readfile >> id)) break;
 			readfile.ignore(numeric_limits<streamsize>::max(), '\n');
 			if(!getline(readfile, addr)) break;
-			if(!(readfile >> area >> price >> soldInt)) break;
+			if(!(readfile >> area >> price >> soldInt)) {
+				readfile.clear(); // Clear the error state
+				break; // Exit the loop if reading fails
+			}
 			readfile.ignore(numeric_limits<streamsize>::max(), '\n');
 
 			Property* loadProperty = nullptr;
@@ -326,6 +350,7 @@ class Agency{
 				break;
 			}
 		}
+		readfile.clear(); // Clear any error flags
 		readfile.close();
 	}
 		void viewProperty(){
@@ -375,8 +400,14 @@ class Agency{
         cout << "Enter Address to search: ";
         cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Clear buffer
         getline(cin, searchAddr);
+		auto toLowerStr=[](string s){
+			transform(s.begin(), s.end(), s.begin(),[](unsigned char c){ return tolower(c); });
+			return s;
+		};
+		string lowerSearchAddr=toLowerStr(searchAddr);
         for(int i = 0; i < currentCount; i++){
-            if(propertyList[i]->address.find(searchAddr) != string::npos){
+			string lowerPropertyAddr=toLowerStr(propertyList[i]->getAddress());
+            if(lowerPropertyAddr.find(lowerSearchAddr) != string::npos){
                 propertyList[i]->displayDetails();
                 found = true;
             }
@@ -440,9 +471,9 @@ class Agency{
 			cout<<BOLD<<"Sold Properties: "<<RESET<<soldCount<<endl;
 			cout<<BOLD<<"Residential Properties: "<<RESET<<res<<endl;
 			cout<<BOLD<<"Commercial Properties: "<<RESET<<com<<endl;
-			cout<<BOLD<<"Total Price: Rs"<<RESET<<totalPrice<<endl;
-			cout<<BOLD<<"Total Area: "<<RESET<<totalArea<<" sq.ft"<<endl;
-			cout<<BOLD<<"Total Tax: Rs"<<RESET<<totalTax<<endl;
+			cout<<BOLD<<"Total Price: Rs"<<RESET<<fixed<<setprecision(2)<<totalPrice<<endl;
+			cout<<BOLD<<"Total Area: "<<RESET<<fixed<<setprecision(2)<<totalArea<<" sq.ft"<<endl;
+			cout<<BOLD<<"Total Tax: Rs"<<RESET<<fixed<<setprecision(2)<<totalTax<<endl;
 			for(int i=0;i<currentCount;i++){
 				propertyList[i]->displayDetails();
 			}
