@@ -503,16 +503,15 @@ void realEstateMenu()
 	Agent.loadproperty();
 	while(true)
 	{
-		cout<<"\n"<<BOLD<<YELLOW<<"==== Real Estate and Property Listing System ===="<<RESET<<endl;
-		cout<<"1. Add Listing"<<endl;
-		cout<<"2. View all Listings"<<endl;
-		cout<<"3. Search Property"<<endl;
-		cout<<"4. Mark Property as Sold"<<endl;
-		cout<<"5. Display Portfolio Summary"<<endl;
-		cout<<"6. Save & Exit"<<endl;
+		cout<<"\n\t\t\t"<<BOLD<<YELLOW<<"==== Real Estate and Property Listing System ===="<<RESET<<endl;
+		cout<<"\t\t\t1. Add Listing"<<endl;
+		cout<<"\t\t\t2. View all Listings"<<endl;
+		cout<<"\t\t\t3. Search Property"<<endl;
+		cout<<"\t\t\t4. Mark Property as Sold"<<endl;
+		cout<<"\t\t\t5. Display Portfolio Summary"<<endl;
+		cout<<"\t\t\t6. Save & Exit"<<endl;
 		
-		int choice = getValidInt("Enter your choice (1-6): ", 1, 6);
-
+		int choice = getValidInt("\t\t\t\tEnter your choice (1-6): ", 1, 6);
 		switch(choice){
 			case 1:
 				Agent.addProperty();
