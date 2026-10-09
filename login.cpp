@@ -25,10 +25,10 @@ void forgot(){
 int main()
 {
 	int c;
-	cout<<"\t\t\t___________________________________________________\n\n\n";
-	cout<<"\t\t\t                 Welcome to the Login Page         \n\n\n";
-	cout<<"\t\t\t_________________          MENU           _________\n\n";
-	cout<<"                                                         \n\n";
+	cout<<"\t\t___________________________________________________\n\n";
+	cout<<"\t\t             Welcome to the Login Page             \n\n";
+	cout<<"\t\t_____________          MENU           _____________\n\n";
+	cout<<"                                                         \n";
 	cout<<"\t| Press 1 to LOGIN                           |"<<endl;
 	cout<<"\t| Press 2 to REGISTER                        |"<<endl;
 	cout<<"\t| Press 3 if you forgot your Password        |"<<endl;
