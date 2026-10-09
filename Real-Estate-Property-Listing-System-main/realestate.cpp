@@ -5,6 +5,8 @@
 #include<cstdlib> //used for exit() function 
 #include<algorithm> //used for transform function(case sensitive search)
 #include<iomanip> //used for output formatting
+#include<cctype> //used for tolower function
+#include<cmath> //used for mathematical operations
 #include "realestate.h"
 using namespace std;
 //ANSI color codes for console text formatting
@@ -48,7 +50,8 @@ class Property{
 			address="";
 			area=0.0;
 			price=0.0;
-			isSold=false;		
+			isSold=false;	
+			totalListings++; //Increment static count whenever a new property is created	
 		}
 		Property(int i,string addr,double a,double pc)
 		{
@@ -87,6 +90,9 @@ class Property{
 		
 		int getID() const{
 			return id; //returns property id
+		}
+		string getAddress() const{
+			return address; //returns property address
 		}
 		double getArea() const{
 			return area; //returns area
@@ -199,7 +205,8 @@ class Agency{
 				propertyList[i]=nullptr;
 			}
 		}
-		void addProperty(){
+
+	void addProperty(){
     if(currentCount >= MAX_PROPERTIES){
         cout << RED << "Error: Agency inventory is full!" << RESET << endl;
         return;
@@ -240,8 +247,12 @@ class Agency{
 
     cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Clear buffer
     string addr;
-    cout << "Enter Address: ";
-    getline(cin, addr);
+	while (true) {
+		cout << "Enter Address: ";
+		getline(cin, addr);
+		if (!addr.empty()) break; // Ensure address is not empty
+		cout << RED << "Invalid input! Address cannot be empty." << RESET << endl;
+	}
 
     double area;
     // Validate Positive Area (> 0)
@@ -277,8 +288,12 @@ class Agency{
     else {
         string bType;
         cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Clear buffer
+		while(true) {
         cout << "Enter Business Type: ";
         getline(cin, bType);
+        if (!bType.empty()) break; // Ensure business type is not empty
+        cout << RED << "Invalid input! Business type cannot be empty." << RESET << endl;
+		}
         newProperty = new CommercialProperty(id, addr, area, price, bType);
     }
 
@@ -304,7 +319,10 @@ class Agency{
 			if(!(readfile >> id)) break;
 			readfile.ignore(numeric_limits<streamsize>::max(), '\n');
 			if(!getline(readfile, addr)) break;
-			if(!(readfile >> area >> price >> soldInt)) break;
+			if(!(readfile >> area >> price >> soldInt)) {
+				readfile.clear(); // Clear the error state
+				break; // Exit the loop if reading fails
+			}
 			readfile.ignore(numeric_limits<streamsize>::max(), '\n');
 
 			Property* loadProperty = nullptr;
@@ -332,6 +350,7 @@ class Agency{
 				break;
 			}
 		}
+		readfile.clear(); // Clear any error flags
 		readfile.close();
 	}
 		void viewProperty(){
@@ -387,7 +406,7 @@ class Agency{
 		};
 		string lowerSearchAddr=toLowerStr(searchAddr);
         for(int i = 0; i < currentCount; i++){
-			string lowerPropertyAddr=toLowerStr(propertyList[i]->address);
+			string lowerPropertyAddr=toLowerStr(propertyList[i]->getAddress());
             if(lowerPropertyAddr.find(lowerSearchAddr) != string::npos){
                 propertyList[i]->displayDetails();
                 found = true;

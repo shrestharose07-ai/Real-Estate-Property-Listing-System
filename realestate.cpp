@@ -194,55 +194,92 @@ class Agency{
 			}
 		}
 		void addProperty(){
-			if(currentCount>=MAX_PROPERTIES){
-				cout<<RED<<"Error:Agency inventory is full!"<<RESET<<endl;
-				return;
-			}
-			int typechoice;
-			cout<<"\n Select Property Type:"<<endl;
-			cout<<"1. Residential Property"<<endl;
-			cout<<"2. Commercial Property"<<endl;
-			cout<<"Enter choice:";
-			cin>>typechoice;
-			Property* newProperty=nullptr;
-			if(typechoice!=1 && typechoice!=2)
-			{
-				cout<<RED<<"Invalid selection!"<<RESET<<endl;
-				return;
-			}
-			int id ;
-			string addr;
-			double area,price;
-			cout<<"Enter Property ID:";
-			cin>>id;
-			cin.ignore(numeric_limits<streamsize>::max(), '\n'); //Clear input buffer
+    if(currentCount >= MAX_PROPERTIES){
+        cout << RED << "Error: Agency inventory is full!" << RESET << endl;
+        return;
+    }
+    int typechoice;
+    cout << "\n Select Property Type:" << endl;
+    cout << "1. Residential Property" << endl;
+    cout << "2. Commercial Property" << endl;
+    cout << "Enter choice: ";
+    
+    // Validate Property Type selection
+    while (!(cin >> typechoice) || (typechoice != 1 && typechoice != 2)) {
+        cout << RED << "Invalid selection! Enter 1 for Residential or 2 for Commercial: " << RESET;
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
 
-			cout<<"Enter Address:";
-			getline(cin,addr);
+    int id;
+    // Validate Unique & Positive Property ID
+    while (true) {
+        cout << "Enter Property ID (Positive Number): ";
+        if (cin >> id && id > 0) {
+            bool exists = false;
+            for (int i = 0; i < currentCount; i++) {
+                if (propertyList[i]->getID() == id) {
+                    exists = true;
+                    break;
+                }
+            }
+            if (!exists) break; // Unique and valid ID
+            cout << RED << "Error: Property ID already exists! Enter a different ID." << RESET << endl;
+        } else {
+            cout << RED << "Invalid input! Property ID must be a positive integer." << RESET << endl;
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        }
+    }
 
-			cout<<"Enter Area(sq.ft):";
-			cin>>area;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Clear buffer
+    string addr;
+    cout << "Enter Address: ";
+    getline(cin, addr);
 
-			cout<<"Enter Asking Price(Rs.):";
-			cin>>price;
+    double area;
+    // Validate Positive Area (> 0)
+    cout << "Enter Area (sq.ft): ";
+    while (!(cin >> area) || area <= 0) {
+        cout << RED << "Invalid input! Area must be greater than 0: " << RESET;
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
 
-			if(typechoice==1){
-				int beds;
-				cout<<"Enter no of bedrooms:";
-				cin>>beds;
-				newProperty=new ResidentialProperty(id,addr,area,price,beds);
-			}
-			else{
-				string bType;
-				cin.ignore(numeric_limits<streamsize>::max(), '\n'); //Clear input buffer
-				cout<<"Enter Business Type:";
-				getline(cin,bType);
-				newProperty=new CommercialProperty(id,addr,area,price,bType);
-			}
-            propertyList[currentCount++]=newProperty ;//Increment count after adding new property
-			saveAllPropertiesToFile(); //Save to file after adding new property
-			cout<<GREEN<<"Property added successfully!"<<RESET<<endl;
-		}
+    double price;
+    // Validate Positive Price (> 0)
+    cout << "Enter Asking Price (Rs.): ";
+    while (!(cin >> price) || price <= 0) {
+        cout << RED << "Invalid input! Price must be greater than 0: " << RESET;
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+
+    Property* newProperty = nullptr;
+
+    if (typechoice == 1) {
+        int beds;
+        // Validate Non-Negative Bedrooms (>= 0)
+        cout << "Enter no of bedrooms: ";
+        while (!(cin >> beds) || beds < 0) {
+            cout << RED << "Invalid input! Bedrooms cannot be negative: " << RESET;
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        }
+        newProperty = new ResidentialProperty(id, addr, area, price, beds);
+    }
+    else {
+        string bType;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Clear buffer
+        cout << "Enter Business Type: ";
+        getline(cin, bType);
+        newProperty = new CommercialProperty(id, addr, area, price, bType);
+    }
+
+    propertyList[currentCount++] = newProperty; // Increment count after adding
+    saveAllPropertiesToFile(); // Save to file
+    cout << GREEN << "Property added successfully!" << RESET << endl;
+}
 
 	void loadproperty(){
 		ifstream readfile("property_data.txt");
@@ -302,59 +339,80 @@ class Agency{
 			}
 		}
 		void searchProperty(){
-			if(currentCount==0){
-				cout<<YELLOW<<"No properties currently in the inventory"<<RESET<<endl;
-				return;
-			}
-			int choice;
-			cout<<BOLD<<CYAN<<"Search by: 1.ID 2.Address 3.Price Range"<<RESET<<endl;
-			cin>>choice;
-			bool found=false;
-			if(choice==1){
-				int searchId;
-				cout<<"Enter Property ID to search:"<<endl;
-				cin>>searchId;
-				for(int i=0;i<currentCount;i++){
-					if(propertyList[i]->getID()==searchId){
-						propertyList[i]->displayDetails();
-						found=true;
-						break;
-					}
-				}
-			}
-			else if(choice==2){
-				string searchAddr;
-				cout<<"Enter Address to search:"<<endl;
-				cin.ignore(numeric_limits<streamsize>::max(), '\n'); //Clear input buffer
-				getline(cin,searchAddr);
-				for(int i=0;i<currentCount;i++){
-					if(propertyList[i]->address.find(searchAddr)!=string::npos){
-						propertyList[i]->displayDetails();
-						found=true;
-					}
-				}
-			}
-			else if(choice==3){
-				double minPrice,maxPrice;
-				cout<<"Enter Minimum Price:"<<endl;
-				cin>>minPrice;
-				cout<<"Enter Maximum Price:"<<endl;
-				cin>>maxPrice;
-				for(int i=0;i<currentCount;i++){
-					if(propertyList[i]->getPrice()>=minPrice && propertyList[i]->getPrice()<=maxPrice){
-						propertyList[i]->displayDetails();
-						found=true;
-					}
-				}
-			}
-			else{
-				cout<<RED<<"Invalid choice!"<<RESET<<endl;
-				return;
-			}
-			if(!found){
-				cout<<RED<<"Property not found!"<<RESET<<endl;
-			}
-		}
+        if(currentCount == 0){
+        cout << YELLOW << "No properties currently in the inventory" << RESET << endl;
+        return;
+    }
+    int choice;
+    cout << BOLD << CYAN << "Search by: 1.ID 2.Address 3.Price Range" << RESET << endl;
+    cout << "Enter choice: ";
+    
+    while (!(cin >> choice) || choice < 1 || choice > 3) {
+        cout << RED << "Invalid choice! Select 1, 2, or 3: " << RESET;
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+
+    bool found = false;
+    if(choice == 1){
+        int searchId;
+        cout << "Enter Property ID to search: ";
+        while (!(cin >> searchId)) {
+            cout << RED << "Invalid ID! Enter a number: " << RESET;
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        }
+        for(int i = 0; i < currentCount; i++){
+            if(propertyList[i]->getID() == searchId){
+                propertyList[i]->displayDetails();
+                found = true;
+                break;
+            }
+        }
+    }
+    else if(choice == 2){
+        string searchAddr;
+        cout << "Enter Address to search: ";
+        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Clear buffer
+        getline(cin, searchAddr);
+        for(int i = 0; i < currentCount; i++){
+            if(propertyList[i]->address.find(searchAddr) != string::npos){
+                propertyList[i]->displayDetails();
+                found = true;
+            }
+        }
+    }
+    else if(choice == 3){
+        double minPrice, maxPrice;
+        
+        // Validate Minimum Price (> 0)
+        cout << "Enter Minimum Price: ";
+        while (!(cin >> minPrice) || minPrice < 0) {
+            cout << RED << "Invalid input! Minimum price cannot be negative: " << RESET;
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        }
+
+        // Validate Maximum Price (must be >= minPrice)
+        cout << "Enter Maximum Price: ";
+        while (!(cin >> maxPrice) || maxPrice < minPrice) {
+            cout << RED << "Invalid input! Maximum price must be greater than or equal to Minimum Price (Rs." << minPrice << "): " << RESET;
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        }
+
+        for(int i = 0; i < currentCount; i++){
+            if(propertyList[i]->getPrice() >= minPrice && propertyList[i]->getPrice() <= maxPrice){
+                propertyList[i]->displayDetails();
+                found = true;
+            }
+        }
+    }
+
+    if(!found){
+        cout << RED << "Property not found!" << RESET << endl;
+    }
+}
 		void displayPortfolio(){
 			if(currentCount==0){
 				cout<<YELLOW<<"No properties currently in the inventory"<<RESET<<endl;
@@ -451,18 +509,21 @@ void realEstateMenu()
 				Agent.searchProperty();
 				break;	
 			case 4:{
-				int searchId;
-				cout<<"Enter Property Id to mark as sold:"<<endl;
-				cin>>searchId;
-				try{
-				Agent.markAsSold(searchId);
-			}
-			catch(const PropertyNotFoundException &e)
-			{
-				cout<<e.getMessage()<<endl;
-			}
-				break;
-			}
+    int searchId;
+    cout << "Enter Property Id to mark as sold: ";
+    while (!(cin >> searchId)) {
+        cout << RED << "Invalid ID! Please enter a valid numeric ID: " << RESET;
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+    try{
+        Agent.markAsSold(searchId);
+    }
+    catch(const PropertyNotFoundException &e) {
+        cout << e.getMessage() << endl;
+    }
+    break;
+}
 			case 5:
 				Agent.displayPortfolio();
 				break;
@@ -476,9 +537,4 @@ void realEstateMenu()
 		}
 	}
 return;
-}
-int main()
-{
-	realEstateMenu();
-	return 0;
 }
