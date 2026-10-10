@@ -19,6 +19,7 @@ using namespace std;
 #define BLUE    "\033[34m"      /* Blue */
 #define MAGENTA "\033[35m"      /* Magenta */
 #define CYAN    "\033[36m"      /* Cyan */
+#define C "                                                                                                  "// Clear line (used for formatting)
 
 const int MAX_PROPERTIES=50; 
 
@@ -46,13 +47,13 @@ int getValidInt(const string& prompt, int minVal, int maxVal = numeric_limits<in
             if (val >= minVal && val <= maxVal) {
                 return val;
             }
-            cout << RED << "Invalid range! Enter a value between " << minVal << " and " << maxVal << "." << RESET << endl;
+            cout <<C<< RED << "Invalid range! Enter a value between " << minVal << " and " << maxVal << "." << RESET << endl;
         } else {
             if (cin.eof()) {
-                cout << RED << "\nInput stream closed!" << RESET << endl;
+                cout <<C<< RED << "\nInput stream closed!" << RESET << endl;
                 exit(0);
             }
-            cout << RED << "Invalid input! Please enter a valid integer number." << RESET << endl;
+            cout <<C<< RED << "Invalid input! Please enter a valid integer number." << RESET << endl;
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
         }
@@ -66,19 +67,19 @@ double getValidDouble(const string& prompt, double minVal, double maxVal = numer
         cout << prompt;
         if (cin >> val) {
             if (isnan(val) || isinf(val)) {
-                cout << RED << "Invalid input! Non-finite numbers (NaN/Infinity) are not allowed." << RESET << endl;
+                cout <<C<< RED << "Invalid input! Non-finite numbers (NaN/Infinity) are not allowed." << RESET << endl;
                 continue;
             }
             if (val >= minVal && val <= maxVal) {
                 return val;
             }
-            cout << RED << "Invalid value! Value must be at least " << minVal << "." << RESET << endl;
+            cout <<C<< RED << "Invalid value! Value must be at least " << minVal << "." << RESET << endl;
         } else {
             if (cin.eof()) {
-                cout << RED << "\nInput stream closed!" << RESET << endl;
+                cout <<C<< RED << "\nInput stream closed!" << RESET << endl;
                 exit(0);
             }
-            cout << RED << "Invalid input! Please enter a valid decimal number." << RESET << endl;
+            cout <<C<< RED << "Invalid input! Please enter a valid decimal number." << RESET << endl;
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
         }
@@ -92,7 +93,7 @@ string getValidAddress(const string& prompt) {
         cout << prompt;
         getline(cin >> ws, str);
         if (str.empty()) {
-            cout << RED << "Address cannot be empty!" << RESET << endl;
+            cout <<C<< RED << "Address cannot be empty!" << RESET << endl;
             continue;
         }
         bool hasLetter = false;
@@ -103,7 +104,7 @@ string getValidAddress(const string& prompt) {
             }
         }
         if (hasLetter) return str;
-        cout << RED << "Invalid address! Address must contain letters (not just numbers/symbols)." << RESET << endl;
+        cout <<C<< RED << "Invalid address! Address must contain letters (not just numbers/symbols)." << RESET << endl;
     }
 }
 
@@ -113,7 +114,7 @@ string getNonEmptyString(const string& prompt) {
         cout << prompt;
         getline(cin >> ws, str);
         if (!str.empty()) return str;
-        cout << RED << "Input cannot be empty!" << RESET << endl;
+        cout <<C<< RED << "Input cannot be empty!" << RESET << endl;
     }
 }
 
@@ -162,11 +163,11 @@ class Property{
 			writefile<<(isSold ? 1 : 0)<<"\n"; 
 		}
 		virtual void displayDetails()const{ 
-			cout<<BOLD<<"ID: "<<RESET<<YELLOW<<id<<RESET<<endl;
-			cout<<BOLD<<"Address: "<<RESET<<address<<endl;
-			cout<<BOLD<<"Area: "<<RESET<<fixed<<setprecision(2)<<area<<" sq.ft"<<RESET<<endl;
-			cout<<BOLD<<"Price: Rs. "<<RESET<<fixed<<setprecision(2)<<price<<endl;
-			cout<<BOLD<<"Status: "<<RESET<<(isSold ?(RED+string("SOLD")+RESET):(GREEN+string("AVAILABLE")+RESET))<<endl;
+			cout<<C<<BOLD<<"ID: "<<RESET<<YELLOW<<id<<RESET<<endl;
+			cout<<C<<BOLD<<"Address: "<<RESET<<address<<endl;
+			cout<<C<<BOLD<<"Area: "<<RESET<<fixed<<setprecision(2)<<area<<" sq.ft"<<RESET<<endl;
+			cout<<C<<BOLD<<"Price: Rs. "<<RESET<<fixed<<setprecision(2)<<price<<endl;
+			cout<<C<<BOLD<<"Status: "<<RESET<<(isSold ?(RED+string("SOLD")+RESET):(GREEN+string("AVAILABLE")+RESET))<<endl;
 		}
 		
 		int getID() const{ return id; }
@@ -201,12 +202,12 @@ class ResidentialProperty: public Property{
 			writefile<<bedrooms<<"\n"; 
 		}
 		void displayDetails() const override{
-			cout<<"\n"<<BOLD<<MAGENTA<<"[RESIDENTIAL PROPERTY]"<<RESET<<endl;
+			cout<<"\n"<<C<<BOLD<<MAGENTA<<"[RESIDENTIAL PROPERTY]"<<RESET<<endl;
 			Property::displayDetails();
-			cout<<BOLD<<"Bedrooms: "<<RESET<<YELLOW<<bedrooms<<RESET<<endl;
-			cout<<BOLD<<"Estimated Market Value: Rs. "<<RESET<<YELLOW<<fixed<<setprecision(2)<<estimatedValue()<<RESET<<endl;
-			cout<<BOLD<<"Calculated Property Tax: Rs. "<<RESET<<YELLOW<<fixed<<setprecision(2)<<calculateTax()<<RESET<<endl;
-			cout<<"------------------------"<<endl;
+			cout<<C<<BOLD<<"Bedrooms: "<<RESET<<YELLOW<<bedrooms<<RESET<<endl;
+			cout<<C<<BOLD<<"Estimated Market Value: Rs. "<<RESET<<YELLOW<<fixed<<setprecision(2)<<estimatedValue()<<RESET<<endl;
+			cout<<C<<BOLD<<"Calculated Property Tax: Rs. "<<RESET<<YELLOW<<fixed<<setprecision(2)<<calculateTax()<<RESET<<endl;
+			cout<<C<<"------------------------"<<RESET<<endl;
 		}
 };
 
@@ -226,12 +227,12 @@ class CommercialProperty:public Property{
 			writefile<<businessType<<"\n"; 
 		}
 		void displayDetails() const override{
-			cout<<"\n"<<BOLD<<BLUE<<"[COMMERCIAL PROPERTY]"<<RESET<<endl;
+			cout<<"\n"<<C<<BOLD<<BLUE<<"[COMMERCIAL PROPERTY]"<<RESET<<endl;
 			Property::displayDetails();
-			cout<<BOLD<<"Business Type: "<<RESET<<YELLOW<<businessType<<RESET<<endl;
-			cout<<BOLD<<"Estimated Market Value: Rs. "<<RESET<<YELLOW<<fixed<<setprecision(2)<<estimatedValue()<<RESET<<endl;
-			cout<<BOLD<<"Calculated Property Tax: Rs. "<<RESET<<YELLOW<<fixed<<setprecision(2)<<calculateTax()<<RESET<<endl;
-			cout<<"------------------------"<<endl;
+			cout<<C<<BOLD<<"Business Type: "<<RESET<<YELLOW<<businessType<<RESET<<endl;
+			cout<<C<<BOLD<<"Estimated Market Value: Rs. "<<RESET<<YELLOW<<fixed<<setprecision(2)<<estimatedValue()<<RESET<<endl;
+			cout<<C<<BOLD<<"Calculated Property Tax: Rs. "<<RESET<<YELLOW<<fixed<<setprecision(2)<<calculateTax()<<RESET<<endl;
+			cout<<C<<"------------------------"<<RESET<<endl;
 		}
 		string getBusinessType() const{ return businessType; }
 };
@@ -273,43 +274,44 @@ class Agency{
 
 		void addProperty(){
 			if(currentCount >= MAX_PROPERTIES){
-				cout << RED << "Error: Agency inventory is full!" << RESET << endl;
+				cout <<C<< RED << "Error: Agency inventory is full!" << RESET << endl;
 				return;
 			}
-			cout << "\nSelect Property Type:" << endl;
-			cout << "1. Residential Property" << endl;
-			cout << "2. Commercial Property" << endl;
-			int typechoice = getValidInt("Enter choice (1 or 2): ", 1, 2);
+			cout << "\n"<<C<<"Select Property Type:" << endl;
+			cout << C<<"1. Residential Property" << endl;
+			cout << C<<"2. Commercial Property" << endl;
+			int typechoice = getValidInt(string(C)+"Enter choice (1 or 2): ", 1, 2);
 
 			int id;
 			while (true) {
-				id = getValidInt("Enter Property ID (Positive Integer): ", 1);
+				id = getValidInt(string(C)+"Enter Property ID (Positive Integer): ", 1);
 				if (!isDuplicateID(id)) break;
-				cout << RED << "Error: Property ID " << id << " already exists! Enter a unique ID." << RESET << endl;
+				cout <<C<< RED << "Error: Property ID " << id << " already exists! Enter a unique ID." << RESET << endl;
 			}
 
-			string addr = getValidAddress("Enter Address: ");
-			double area = getValidDouble("Enter Area (sq.ft): ", 1.0, 1000000.0);
-			double price = getValidDouble("Enter Asking Price (Rs.): ", 1.0, 10000000000.0);
+			string addr = getValidAddress(string(C)+"Enter Address: ");
+			double area = getValidDouble(string(C)+"Enter Area (sq.ft): ", 1.0, 1000000.0);
+			double price = getValidDouble(string(C)+"Enter Asking Price (Rs.): ", 1.0, 10000000000.0);
 
 			Property* newProperty = nullptr;
 
 			if (typechoice == 1) {
-				int beds = getValidInt("Enter no of bedrooms (0-100): ", 0, 100);
+				int beds = getValidInt(string(C)+"Enter no of bedrooms (0-100): ", 0, 100);
 				newProperty = new ResidentialProperty(id, addr, area, price, beds);
 			} else {
-				string bType = getNonEmptyString("Enter Business Type (e.g., Office/Shop): ");
+				string bType = getNonEmptyString(string(C)+"Enter Business Type (e.g., Office/Shop): ");
 				newProperty = new CommercialProperty(id, addr, area, price, bType);
 			}
 
 			propertyList[currentCount++] = newProperty; 
 			saveAllPropertiesToFile(); 
-			cout << GREEN << "Property added successfully!" << RESET << endl;
+			cout <<C<< GREEN << "Property added successfully!" << RESET << endl;
 		}
 
 		void loadproperty(){
 			ifstream readfile("property_data.txt");
 			if(!readfile.is_open()){
+				cout <<C<< RED << "Error: Unable to open property data file!" << RESET << endl;
 				return; 
 			}
 
@@ -366,10 +368,10 @@ class Agency{
 
 		void viewProperty(){
 			if(currentCount==0){
-				cout<<YELLOW<<"No properties currently in the inventory"<<RESET<<endl;
+				cout<<C<<YELLOW<<"No properties currently in the inventory"<<RESET<<endl;
 				return;
 			}
-			cout<<"\n"<<BOLD<<CYAN<<"===CURRENT LISTINGS==="<<RESET<<"\n"<<endl;
+			cout<<"\n"<<C<<BOLD<<CYAN<<"===CURRENT LISTINGS==="<<RESET<<"\n"<<endl;
 			for(int i=0;i<currentCount;i++){
 				if(propertyList[i] != nullptr){
 					showListing(*propertyList[i]); // Uses assignment-required showListing helper
@@ -379,18 +381,18 @@ class Agency{
 
 		void searchProperty(){
 			if(currentCount == 0){
-				cout << YELLOW << "No properties currently in the inventory" << RESET << endl;
+				cout << C << YELLOW << "No properties currently in the inventory" << RESET << endl;
 				return;
 			}
-			cout << BOLD << CYAN << "\nSearch Options:" << RESET << endl;
-			cout << "1. By Property ID" << endl;
-			cout << "2. By Address" << endl;
-			cout << "3. By Price Range" << endl;
-			int choice = getValidInt("Enter choice (1-3): ", 1, 3);
+			cout << C << BOLD << CYAN << "\nSearch Options:" << RESET << endl;
+			cout << C<<"1. By Property ID" << endl;
+			cout << C<<"2. By Address" << endl;
+			cout << C<<"3. By Price Range" << endl;
+			int choice = getValidInt(string(C)+"Enter choice (1-3): ", 1, 3);
 
 			bool found = false;
 			if(choice == 1){
-				int searchId = getValidInt("Enter Property ID to search (Positive Integer): ", 1);
+				int searchId = getValidInt(string(C)+"Enter Property ID to search (Positive Integer): ", 1);
 				for(int i = 0; i < currentCount; i++){
 					if(propertyList[i]->getID() == searchId){
 						showListing(*propertyList[i]);
@@ -400,7 +402,7 @@ class Agency{
 				}
 			}
 			else if(choice == 2){
-				string searchAddr = getNonEmptyString("Enter Address keyword to search: ");
+				string searchAddr = getNonEmptyString(string(C)+"Enter Address keyword to search: ");
 				auto toLowerStr = [](string s) {
 					transform(s.begin(), s.end(), s.begin(), [](unsigned char c){ return tolower(c); });
 					return s;
@@ -415,8 +417,8 @@ class Agency{
 				}
 			}
 			else if(choice == 3){
-				double minPrice = getValidDouble("Enter Minimum Price (Rs.): ", 0.0);
-				double maxPrice = getValidDouble("Enter Maximum Price (Rs.): ", minPrice);
+				double minPrice = getValidDouble(string(C)+"Enter Minimum Price (Rs.): ", 0.0);
+				double maxPrice = getValidDouble(string(C)+"Enter Maximum Price (Rs.): ", minPrice);
 
 				for(int i = 0; i < currentCount; i++){
 					if(propertyList[i]->getPrice() >= minPrice && propertyList[i]->getPrice() <= maxPrice){
@@ -427,13 +429,13 @@ class Agency{
 			}
 
 			if(!found){
-				cout << RED << "Property not found!" << RESET << endl;
+				cout << C << RED << "Property not found!" << RESET << endl;
 			}
 		}
 
 		void displayPortfolio(){
 			if(currentCount==0){
-				cout<<YELLOW<<"No properties currently in the inventory"<<RESET<<endl;
+				cout<<C<<YELLOW<<"No properties currently in the inventory"<<RESET<<endl;
 				return;
 			} 
 			int soldCount=0,res=0,com=0;
@@ -452,15 +454,15 @@ class Agency{
 				totalArea += propertyList[i]->getArea();
 				totalTax += propertyList[i]->calculateTax();
 			}
-			cout<<"\n"<<BOLD<<CYAN<<"===PORTFOLIO SUMMARY==="<<RESET<<"\n"<<endl;
-			cout<<BOLD<<"Total Active Listings: "<<RESET<<Property::getTotalListings()<<endl;
-			cout<<BOLD<<"Sold Properties: "<<RESET<<soldCount<<endl;
-			cout<<BOLD<<"Residential Properties: "<<RESET<<res<<endl;
-			cout<<BOLD<<"Commercial Properties: "<<RESET<<com<<endl;
-			cout<<BOLD<<"Total Price Value: Rs. "<<RESET<<fixed<<setprecision(2)<<totalPrice<<endl;
-			cout<<BOLD<<"Total Area: "<<RESET<<fixed<<setprecision(2)<<totalArea<<" sq.ft"<<endl;
-			cout<<BOLD<<"Total Estimated Tax: Rs. "<<RESET<<fixed<<setprecision(2)<<totalTax<<endl;
-			cout<<"\n"<<BOLD<<"Detailed Property Items:"<<RESET<<endl;
+			cout<<"\n"<<C<<BOLD<<CYAN<<"===PORTFOLIO SUMMARY==="<<RESET<<"\n"<<endl;
+			cout<<C<<BOLD<<"Total Active Listings: "<<RESET<<Property::getTotalListings()<<endl;
+			cout<<C<<BOLD<<"Sold Properties: "<<RESET<<soldCount<<endl;
+			cout<<C<<BOLD<<"Residential Properties: "<<RESET<<res<<endl;
+			cout<<C<<BOLD<<"Commercial Properties: "<<RESET<<com<<endl;
+			cout<<C<<BOLD<<"Total Price Value: Rs. "<<RESET<<fixed<<setprecision(2)<<totalPrice<<endl;
+			cout<<C<<BOLD<<"Total Area: "<<RESET<<fixed<<setprecision(2)<<totalArea<<" sq.ft"<<endl;
+			cout<<C<<BOLD<<"Total Estimated Tax: Rs. "<<RESET<<fixed<<setprecision(2)<<totalTax<<endl;
+			cout<<"\n"<<C<<BOLD<<"Detailed Property Items:"<<RESET<<endl;
 			for(int i=0;i<currentCount;i++){
 				showListing(*propertyList[i]);
 			}
@@ -470,7 +472,7 @@ class Agency{
 			ofstream writefile("property_data.txt");
 			if(!writefile)
 			{
-				cout<<RED<<"Error opening file for writing!"<<RESET<<endl;
+				cout<<C<<RED<<"Error opening file for writing!"<<RESET<<endl;
 				return;
 			}
 			for(int i=0;i<currentCount;i++){
@@ -483,17 +485,17 @@ class Agency{
 			for(int i=0;i<currentCount;i++){
 				if(propertyList[i]->getID()==searchId){
 					if(propertyList[i]->getIsSold()){
-						cout<<YELLOW<<"Property ID "<<searchId<<" is already marked as sold."<<RESET<<endl;
+						cout<<C<<YELLOW<<"Property ID "<<searchId<<" is already marked as sold."<<RESET<<endl;
 					}
 					else{
 						propertyList[i]->setSold(true);
 						saveAllPropertiesToFile(); 
-						cout<<GREEN<<"Property ID "<<searchId<<" successfully marked as Sold."<<RESET<<endl;
+						cout<<C<<GREEN<<"Property ID "<<searchId<<" successfully marked as Sold."<<RESET<<endl;
 					}
 					return;
 				}
 			}
-			throw PropertyNotFoundException(RED+string("Error: Property ID ") + to_string(searchId) + string(" not found!")+RESET);
+			throw PropertyNotFoundException(string(C)+RED+string("Error: Property ID ") + to_string(searchId) + string(" not found!")+RESET);
 		}		
 };
 
@@ -503,15 +505,16 @@ void realEstateMenu()
 	Agent.loadproperty();
 	while(true)
 	{
-		cout<<"\n\t\t\t"<<BOLD<<YELLOW<<"==== Real Estate and Property Listing System ===="<<RESET<<endl;
-		cout<<"\t\t\t1. Add Listing"<<endl;
-		cout<<"\t\t\t2. View all Listings"<<endl;
-		cout<<"\t\t\t3. Search Property"<<endl;
-		cout<<"\t\t\t4. Mark Property as Sold"<<endl;
-		cout<<"\t\t\t5. Display Portfolio Summary"<<endl;
-		cout<<"\t\t\t6. Save & Exit"<<endl;
+		cout<<"\n";
+		cout<<C<<BOLD<<YELLOW<<"==== Real Estate and Property Listing System ===="<<RESET<<endl;
+		cout<<C<<"1. Add Listing"<<endl;
+		cout<<C<<"2. View all Listings"<<endl;
+		cout<<C<<"3. Search Property"<<endl;
+		cout<<C<<"4. Mark Property as Sold"<<endl;
+		cout<<C<<"5. Display Portfolio Summary"<<endl;
+		cout<<C<<"6. Save & Exit"<<endl;
 		
-		int choice = getValidInt("\t\t\t\tEnter your choice (1-6): ", 1, 6);
+		int choice = getValidInt(string(C)+"Enter your choice (1-6): ", 1, 6);
 		switch(choice){
 			case 1:
 				Agent.addProperty();
@@ -523,12 +526,12 @@ void realEstateMenu()
 				Agent.searchProperty();
 				break;	
 			case 4:{
-				int searchId = getValidInt("Enter Property ID to mark as sold (Positive Integer): ", 1);
+				int searchId = getValidInt(string(C)+"Enter Property ID to mark as sold (Positive Integer): ", 1);
 				try{
 					Agent.markAsSold(searchId);
 				}
 				catch(const PropertyNotFoundException &e) {
-					cout << e.getMessage() << endl;
+					cout <<C<< e.getMessage() << endl;
 				}
 				break;
 			}
@@ -537,7 +540,7 @@ void realEstateMenu()
 				break;
 			case 6:
 				Agent.saveAllPropertiesToFile();	
-				cout<<GREEN<<"Goodbye!!"<<RESET<<endl;
+				cout<<C<<GREEN<<"Goodbye!!"<<RESET<<endl;
 				return;
 		}
 	}
