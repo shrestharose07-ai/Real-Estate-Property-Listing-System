@@ -119,7 +119,7 @@ void UserAccount::login()
 	
 	if(count==1)
 	{
-		cout<<userID<<"\n Your LOGIN is successfull \n thanks for logging in! \n";
+		cout << "\nYour LOGIN is successfull! \nThanks for logging in!\n";
 		system("pause");
 		system("cls");
 		realEstateMenu();
