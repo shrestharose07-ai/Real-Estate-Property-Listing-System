@@ -96,3 +96,17 @@ ktm
 4.5679e+07
 0
 restaurant 
+Commercial
+2345
+ktm
+4567
+78900
+0
+7
+Residential
+67
+dillibazar
+4567
+67890
+1
+97

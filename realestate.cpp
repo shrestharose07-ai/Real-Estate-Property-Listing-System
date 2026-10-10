@@ -20,7 +20,7 @@ using namespace std;
 #define BLUE    "\033[34m"      /* Blue */
 #define MAGENTA "\033[35m"      /* Magenta */
 #define CYAN    "\033[36m"      /* Cyan */
-#define C "                                                                          "// Clear line (used for formatting)
+#define C "                                                             "// Clear line (used for formatting)
 
 const int MAX_PROPERTIES=50; 
 
@@ -506,7 +506,7 @@ void realEstateMenu()
 	Agent.loadproperty();
 	while(true)
 	{
-		cout<<"\n";
+		cout<<C<<"\n";
 		cout<<C<<BOLD<<YELLOW<<"==== Real Estate and Property Listing System ===="<<RESET<<endl;
 		cout<<C<<"1. Add Listing"<<endl;
 		cout<<C<<"2. View all Listings"<<endl;
@@ -532,7 +532,7 @@ void realEstateMenu()
 					Agent.markAsSold(searchId);
 				}
 				catch(const PropertyNotFoundException &e) {
-					cout <<C<< e.getMessage() << endl;
+					cout<<C<< e.getMessage() << endl;
 				}
 				break;
 			}
