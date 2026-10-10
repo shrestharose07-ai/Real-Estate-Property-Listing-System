@@ -20,10 +20,7 @@ using namespace std;
 #define BLUE    "\033[34m"      /* Blue */
 #define MAGENTA "\033[35m"      /* Magenta */
 #define CYAN    "\033[36m"      /* Cyan */
-<<<<<<< HEAD
 #define C "                                                             "// Clear line (used for formatting)
-=======
->>>>>>> 9bfb042bf21800565b48b7a76e54da7c0e490dc4
 
 const int MAX_PROPERTIES=50; 
 
@@ -390,20 +387,11 @@ class Agency{
 				cout << YELLOW << "No properties currently in the inventory" << RESET << endl;
 				return;
 			}
-<<<<<<< HEAD
 			cout << C << BOLD << CYAN << "Search Options:" << RESET << endl;
 			cout << C<<"1. By Property ID" << endl;
 			cout << C<<"2. By Address" << endl;
 			cout << C<<"3. By Price Range" << endl;
 			int choice = getValidInt(string(C)+"Enter choice (1-3): ", 1, 3);
-=======
-			cout << BOLD << CYAN << "\nSearch Options:" << RESET << endl;
-			cout << "1. By Property ID" << endl;
-			cout << "2. By Address" << endl;
-			cout << "3. By Price Range" << endl;
-			int choice = getValidInt("Enter choice (1-3): ", 1, 3);
->>>>>>> 9bfb042bf21800565b48b7a76e54da7c0e490dc4
-
 			bool found = false;
 			if(choice == 1){
 				int searchId = getValidInt("Enter Property ID to search (Positive Integer): ", 1);
@@ -443,11 +431,7 @@ class Agency{
 			}
 
 			if(!found){
-<<<<<<< HEAD
 				cout <<C<< RED<<"Property not found!" << RESET << endl;
-=======
-				cout << RED << "Property not found!" << RESET << endl;
->>>>>>> 9bfb042bf21800565b48b7a76e54da7c0e490dc4
 			}
 		}
 
@@ -523,7 +507,6 @@ void realEstateMenu()
 	Agent.loadproperty();
 	while(true)
 	{
-<<<<<<< HEAD
 		cout<<C<<"\n";
 		cout<<C<<BOLD<<YELLOW<<"==== Real Estate and Property Listing System ===="<<RESET<<endl;
 		cout<<C<<"1. Add Listing"<<endl;
@@ -532,16 +515,6 @@ void realEstateMenu()
 		cout<<C<<"4. Mark Property as Sold"<<endl;
 		cout<<C<<"5. Display Portfolio Summary"<<endl;
 		cout<<C<<"6. Save & Exit"<<endl;
-=======
-		cout<<"\n\t\t\t"<<BOLD<<YELLOW<<"==== Real Estate and Property Listing System ===="<<RESET<<endl;
-		cout<<"\t\t\t1. Add Listing"<<endl;
-		cout<<"\t\t\t2. View all Listings"<<endl;
-		cout<<"\t\t\t3. Search Property"<<endl;
-		cout<<"\t\t\t4. Mark Property as Sold"<<endl;
-		cout<<"\t\t\t5. Display Portfolio Summary"<<endl;
-		cout<<"\t\t\t6. Save & Exit"<<endl;
->>>>>>> 9bfb042bf21800565b48b7a76e54da7c0e490dc4
-		
 		int choice = getValidInt("\t\t\t\tEnter your choice (1-6): ", 1, 6);
 
 		switch(choice){
@@ -560,11 +533,7 @@ void realEstateMenu()
 					Agent.markAsSold(searchId);
 				}
 				catch(const PropertyNotFoundException &e) {
-<<<<<<< HEAD
 					cout<<C<< e.getMessage() << endl;
-=======
-					cout << e.getMessage() << endl;
->>>>>>> 9bfb042bf21800565b48b7a76e54da7c0e490dc4
 				}
 				break;
 			}
