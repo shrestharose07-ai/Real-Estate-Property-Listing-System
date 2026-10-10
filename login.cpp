@@ -66,13 +66,43 @@ int main()
 void UserAccount::login()
 {
 	int count=0;
-	string userID, password, id, pass;
+	string userID = "", password = "", id, pass;
+	char ch;
+	
 	system("cls");
 	cout<<"\t\t\t Please enter the username and password : "<<endl;
+	
+	// Masking USERNAME input with '*'
 	cout<<"\t\t\t USERNAME ";
-	cin>>userID;
+	while((ch = _getch()) != '\r') { // '\r' is the Enter key
+		if(ch == '\b') { // Handle Backspace key
+			if(!userID.empty()) {
+				userID.pop_back();
+				cout << "\b \b"; // Erase the last '*'
+			}
+		}
+		else if(ch >= 32 && ch <= 126) { // Printable characters
+			userID.push_back(ch);
+			cout << '*';
+		}
+	}
+	cout << endl;
+
+	// Masking PASSWORD input with '*'
 	cout<<"\t\t\t PASSWORD ";
-	cin>>password;
+	while((ch = _getch()) != '\r') { 
+		if(ch == '\b') { 
+			if(!password.empty()) {
+				password.pop_back();
+				cout << "\b \b"; 
+			}
+		}
+		else if(ch >= 32 && ch <= 126) { 
+			password.push_back(ch);
+			cout << '*';
+		}
+	}
+	cout << endl;
 	
 	ifstream input("records.txt");
 	
@@ -82,7 +112,6 @@ void UserAccount::login()
 		{
 			count=1;
 			system("cls");
-			
 		}
 	}
 	input.close();
@@ -96,6 +125,7 @@ void UserAccount::login()
 	}
 	else{
 		cout<<"\n LOGIN ERROR \n Please check your username and password\n";
+		system("pause");
 		main();
 	}
 }
