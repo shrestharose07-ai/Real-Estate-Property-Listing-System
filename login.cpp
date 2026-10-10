@@ -1,6 +1,7 @@
 #include<iostream>
 #include<fstream>
 #include<string.h>
+#include<conio.h>
 #include "realestate.h"
 using namespace std;
 
