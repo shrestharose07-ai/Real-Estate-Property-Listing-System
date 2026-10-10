@@ -34,7 +34,7 @@ int main()
 	cout<<"\t\t\t\t| Press 2 to REGISTER                        |"<<endl;
 	cout<<"\t\t\t\t| Press 3 if you forgot your Password        |"<<endl;
 	cout<<"\t\t\t\t| Press 4 to EXIT                            |"<<endl;
-	cout<<"\n\t\t\t\t\t Please enter your choice : ";
+	cout<<"\n\t\t\t\t\t Please enter out choice : ";
 	cin>>c;
 	cout<<endl;
 	
