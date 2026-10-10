@@ -7,6 +7,7 @@
 #include<iomanip> //used for output formatting
 #include<cctype> //used for tolower function
 #include<cmath> //used for mathematical operations
+#include<conio.h> //used for getch() function to read password input without echoing
 #include "realestate.h"
 using namespace std;
 
@@ -19,7 +20,7 @@ using namespace std;
 #define BLUE    "\033[34m"      /* Blue */
 #define MAGENTA "\033[35m"      /* Magenta */
 #define CYAN    "\033[36m"      /* Cyan */
-#define C "                                                                                                  "// Clear line (used for formatting)
+#define C "                                                                          "// Clear line (used for formatting)
 
 const int MAX_PROPERTIES=50; 
 
@@ -384,7 +385,7 @@ class Agency{
 				cout << C << YELLOW << "No properties currently in the inventory" << RESET << endl;
 				return;
 			}
-			cout << C << BOLD << CYAN << "\nSearch Options:" << RESET << endl;
+			cout << C << BOLD << CYAN << "Search Options:" << RESET << endl;
 			cout << C<<"1. By Property ID" << endl;
 			cout << C<<"2. By Address" << endl;
 			cout << C<<"3. By Price Range" << endl;
@@ -429,7 +430,7 @@ class Agency{
 			}
 
 			if(!found){
-				cout << C << RED << "Property not found!" << RESET << endl;
+				cout <<C<< RED<<"Property not found!" << RESET << endl;
 			}
 		}
 

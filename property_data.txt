@@ -89,3 +89,10 @@ ktm
 6789
 0
 8
+Commercial
+15
+ktm
+3456
+4.5679e+07
+0
+restaurant 
