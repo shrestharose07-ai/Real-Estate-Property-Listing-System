@@ -53,11 +53,11 @@ int main()
 			break;
 			
 		case 4:
-			cout<<"\t\t\t Thank You! \n\n";
+			cout<<"\t\t\t\t Thank You! \n\n";
 			break;
 		default:
 			system("cls");
-			cout<<"\t\t\t Please select from the options given above \n"<<endl;
+			cout<<"\t\t\t\t Please select from the options given above \n"<<endl;
 			main();
 			
 	}
@@ -71,10 +71,10 @@ void UserAccount::login()
 	char ch;
 	
 	system("cls");
-	cout<<"\t\t\t Please enter the username and password : "<<endl;
+	cout<<"\t\t\t\t Please enter the username and password : "<<endl;
 	
 	// Masking USERNAME input with '*'
-	cout<<"\t\t\t USERNAME ";
+	cout<<"\t\t\t\t USERNAME ";
 	while((ch = _getch()) != '\r') { // '\r' is the Enter key
 		if(ch == '\b') { // Handle Backspace key
 			if(!userID.empty()) {
@@ -90,7 +90,7 @@ void UserAccount::login()
 	cout << endl;
 
 	// Masking PASSWORD input with '*'
-	cout<<"\t\t\t PASSWORD ";
+	cout<<"\t\t\t\t PASSWORD ";
 	while((ch = _getch()) != '\r') { 
 		if(ch == '\b') { 
 			if(!password.empty()) {
@@ -119,13 +119,13 @@ void UserAccount::login()
 	
 	if(count==1)
 	{
-		cout << "\nYour LOGIN is successfull! \nThanks for logging in!\n";
+		cout << "\n\t\t\t\tYour LOGIN is successfull! \nThanks for logging in!\n";
 		system("pause");
 		system("cls");
 		realEstateMenu();
 	}
 	else{
-		cout<<"\n LOGIN ERROR \n Please check your username and password\n";
+		cout<<"\n\t\t\t\t LOGIN ERROR \n Please check your username and password\n";
 		system("pause");
 		main();
 	}
