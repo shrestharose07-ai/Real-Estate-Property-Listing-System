@@ -10,7 +10,6 @@
 #define YELLOW "\033[33m"      /* Yellow */
 #define CYAN   "\033[36m"      /* Cyan */
 #define BOLD   "\033[1m"        /* Bold */
-#define  C "                                      "//used for underlined text formatting
 
 using namespace std;
 
@@ -35,17 +34,17 @@ void forgot(){
 int main()
 {
 	int c;
-	cout<<C<<BOLD<<YELLOW<<"___________________________________________________\n"<<RESET<<endl;
-	cout<<C<<BOLD<<YELLOW<<"            Welcome to the Login Page             \n"<<RESET<<endl;
-	cout<<C<<BOLD<<YELLOW<<"____________          MENU           _____________\n"<<RESET<<endl;
-	cout<<C<<"                                                         "<<RESET<<endl;
-	cout<<C<<BOLD<<CYAN<<"| Press 1 to LOGIN                           |"<<RESET<<endl;
-	cout<<C<<BOLD<<CYAN<<"| Press 2 to REGISTER                        |"<<RESET<<endl;
-	cout<<C<<BOLD<<CYAN<<"| Press 3 if you forgot your Password        |"<<RESET<<endl;
-	cout<<C<<BOLD<<CYAN<<"| Press 4 to EXIT                            |"<<RESET<<endl;
-	cout<<C<<CYAN<<"Please enter out choice : "<<RESET<<endl;
+	cout<<BOLD<<YELLOW<<"\t\t\t\t\t\t___________________________________________________\n"<<RESET<<endl;
+	cout<<BOLD<<YELLOW<<"\t\t\t\t\t\t            Welcome to the Login Page             \n"<<RESET<<endl;
+	cout<<BOLD<<YELLOW<<"\t\t\t\t\t\t____________          MENU           _____________\n"<<RESET<<endl;
+	cout<<"                                                         "<<RESET<<endl;
+	cout<<BOLD<<CYAN<<"\t\t\t\t\t\t| Press 1 to LOGIN                           |"<<RESET<<endl;
+	cout<<BOLD<<CYAN<<"\t\t\t\t\t\t| Press 2 to REGISTER                        |"<<RESET<<endl;
+	cout<<BOLD<<CYAN<<"\t\t\t\t\t\t| Press 3 if you forgot your Password        |"<<RESET<<endl;
+	cout<<BOLD<<CYAN<<"\t\t\t\t\t\t| Press 4 to EXIT                            |"<<RESET<<endl;
+	cout<<CYAN<<"\n\t\t\t\t\t\tPlease enter out choice :"<<RESET;
 	cin>>c;
-	cout<<endl;
+    cout<<endl;
 	
 	switch(c)
 	{
@@ -62,15 +61,14 @@ int main()
 			break;
 			
 		case 4:
-			cout<<C<<GREEN<<"Thank You! "<<RESET<<endl;
+			cout<<BOLD<<GREEN<<"\t\t\t\t\t\tThank You! "<<RESET<<endl;
 			break;
 		default:
 			system("cls");
-			cout<<C"Please select from the options given above "<<RESET<<endl;
+			cout<<BOLD<<RED<<"\t\t\t\t\t\tPlease select from the options given above "<<RESET<<endl;
 			main();
 			
 	}
-
 }
 
 void UserAccount::login()
@@ -80,10 +78,10 @@ void UserAccount::login()
 	char ch;
 	
 	system("cls");
-	cout<<C<<"Please enter the username and password : "<<RESET<<endl;
+	cout<<BOLD<<CYAN<<"\t\t\t\t\t\tPlease enter the username and password : "<<RESET<<endl;
 	
 	// Masking USERNAME input with '*'
-	cout<<C<<"USERNAME ";
+	cout<<BOLD<<CYAN<<"\t\t\t\t\t\tUSERNAME ";
 	while((ch = _getch()) != '\r') { // '\r' is the Enter key
 		if(ch == '\b') { // Handle Backspace key
 			if(!userID.empty()) {
@@ -99,7 +97,7 @@ void UserAccount::login()
 	cout << endl;
 
 	// Masking PASSWORD input with '*'
-	cout<<C<<"PASSWORD ";
+	cout<<BOLD<<CYAN<<"\t\t\t\t\t\tPASSWORD ";
 	while((ch = _getch()) != '\r') { 
 		if(ch == '\b') { 
 			if(!password.empty()) {
@@ -128,13 +126,13 @@ void UserAccount::login()
 	
 	if(count==1)
 	{
-		cout << C<<GREEN<<"Your LOGIN is successfull! "<<RESET<<endl<<C<<GREEN<<"Thanks for logging in!"<<RESET<<endl;
+		cout << BOLD<<GREEN<<"\t\t\t\t\t\tYour LOGIN is successfull! "<<RESET<<endl<<BOLD<<GREEN<<"\t\t\t\t\t\tThanks for logging in!"<<RESET<<endl;
 		system("pause");
 		system("cls");
 		realEstateMenu();
 	}
 	else{
-		cout<<C<<RED<<"LOGIN ERROR"<<RESET<<endl<<C<<RED<<"Please check your username and password"<<RESET<<endl;
+		cout<<BOLD<<RED<<"\t\t\t\t\t\tLOGIN ERROR"<<RESET<<endl<<BOLD<<RED<<"\t\t\t\t\t\tPlease check your username and password"<<RESET<<endl;
 		system("pause");
 		main();
 	}
@@ -143,15 +141,15 @@ void UserAccount::registration()
 {
 	string ruserID, rpassword, rid, rpass;
 	system("cls");
-	cout<<C<<"Enter the Username : "<<RESET<<endl;
+	cout<<BOLD<<CYAN<<"\t\t\t\t\t\tEnter the Username : "<<RESET<<endl;
 	cin>>ruserID;
-	cout<<C<<"Enter the Password : "<<RESET<<endl;
+	cout<<BOLD<<CYAN<<"\t\t\t\t\t\tEnter the Password : "<<RESET<<endl;
 	cin>>rpassword;
 	
 	ofstream f1("records.txt", ios::app);
 	f1<<ruserID<<' '<<rpassword<<endl;
 	system("cls");
-	cout<<C<<GREEN<<"Registration is successfull! "<<RESET<<endl;
+	cout<<BOLD<<GREEN<<"\t\t\t\t\t\tRegistration is successfull! "<<RESET<<endl;
 	main();
 	
 	
@@ -160,9 +158,9 @@ void UserAccount::forgot()
 {
 	int option;
 	system("cls");
-	cout<<C<<"You forgot the password? Now worries "<<RESET<<endl;
-	cout<<C<<"Press 1 to search your id by username "<<RESET<<endl;
-	cout<<C<<"Press 2 to go back to the main menu "<<RESET<<endl;
+	cout<<BOLD<<CYAN<<"\t\t\t\t\t\tYou forgot the password? Now worries "<<RESET<<endl;
+	cout<<BOLD<<CYAN<<"\t\t\t\t\t\tPress 1 to search your id by username "<<RESET<<endl;
+	cout<<BOLD<<CYAN<<"\t\t\t\t\t\tPress 2 to go back to the main menu "<<RESET<<endl;
 	cin>>option;
 	switch(option)
 	{
@@ -171,7 +169,7 @@ void UserAccount::forgot()
 		{
 			int count=0;
 			string suserID,sID,spass;
-			cout<<C<<"Enter the username which you remembered : "<<RESET<<endl;
+			cout<<BOLD<<CYAN<<"\t\t\t\t\t\tEnter the username which you remembered : "<<RESET<<endl;
 			cin>>suserID;
 			
 			ifstream f2("records.txt");
@@ -185,12 +183,12 @@ void UserAccount::forgot()
 			 f2.close();
 			 if(count==1)
 			 {
-			 	cout<<C<<GREEN<<"Your account is found! "<<RESET<<endl;
-			 	cout<<C<<"Your Password is : "<<spass<<RESET<<endl;
+			 	cout<<GREEN<<"\t\t\t\t\t\tYour account is found! "<<RESET<<endl;
+			 	cout<<"\t\t\t\t\t\tYour Password is : "<<spass<<RESET<<endl;
 			 	main();
 			 }
 			 else{
-			 	cout<<C<<RED<<"Sorry! your account is not found!"<<RESET<<endl;
+			 	cout<<RED<<"\t\t\t\t\t\tSorry! your account is not found!"<<RESET<<endl;
 			 	main();
 			 }
 			 break;
@@ -200,7 +198,7 @@ void UserAccount::forgot()
 				main();
 			}
 			default:
-				cout<<C<<RED<<"Wrong choice! Please try again "<<RESET<<endl;
+				cout<<RED<<"\t\t\t\t\t\tWrong choice! Please try again "<<RESET<<endl;
 				forgot();
 				
 	}
